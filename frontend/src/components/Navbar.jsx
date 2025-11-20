@@ -233,7 +233,7 @@ const Navbar = () => {
                     Study Material
                   </NavLink>
                   <NavLink
-                    to="/exam"
+                    to="/MysavedExams"
                     onClick={() => setUserMenuOpen(false)}
                     className="block px-4 py-2 hover:bg-yellow-500"
                   >
@@ -394,7 +394,7 @@ const Navbar = () => {
                     </li>
                     <li>
                       <NavLink
-                        to="/exam"
+                        to="/MysavedExams"
                         onClick={() => {
                           setMobileUserMenuOpen(false);
                           setIsOpen(false);

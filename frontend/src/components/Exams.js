@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDown, Check, Filter, Search } from "lucide-react";
+import { ChevronDown, Check, Filter, Search, Bookmark } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "./Navbar";
 import Footer from "../components/Footer";
@@ -79,6 +79,8 @@ const ExamCard = ({
   modeLevel,
   isSelected,
   toggleSelect,
+  isSaved,
+  toggleSave,
 }) => {
   return (
     <motion.div
@@ -112,6 +114,19 @@ const ExamCard = ({
             >
               Select
             </label>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSave(examName);
+              }}
+              className="ml-2 p-1 rounded hover:bg-gray-100 transition-colors"
+              title="Save Exam"
+            >
+              <Bookmark 
+                className={`h-4 w-4 transition-colors ${isSaved ? 'text-yellow-500 fill-current' : 'text-gray-400'}`} 
+              />
+            </button>
           </div>
 
           <h3 className="text-left font-extrabold text-base sm:text-lg md:text-xl text-gray-800">
@@ -177,6 +192,7 @@ const Examain = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("Upcoming");
   const [compareSelected, setCompareSelected] = useState([]);
+  const [savedExams, setSavedExams] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
 
   const toggleCompare = (examName) => {
@@ -185,6 +201,14 @@ const Examain = () => {
     } else {
       if (compareSelected.length < 3) setCompareSelected([...compareSelected, examName]);
       else alert("You can compare up to 3 exams only.");
+    }
+  };
+
+  const toggleSave = (examName) => {
+    if (savedExams.includes(examName)) {
+      setSavedExams(savedExams.filter((e) => e !== examName));
+    } else {
+      setSavedExams([...savedExams, examName]);
     }
   };
 
@@ -278,6 +302,8 @@ const Examain = () => {
                   modeLevel={exam.modeLevel}
                   isSelected={compareSelected.includes(exam.examName)}
                   toggleSelect={toggleCompare}
+                  isSaved={savedExams.includes(exam.examName)}
+                  toggleSave={toggleSave}
                 />
               ))
             )}
