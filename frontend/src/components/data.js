@@ -96,7 +96,7 @@ export const infodata = [
         id:4,
         heading: "Study Abroad",
         para: "Want to secure your future and go abroad just give it a click and you will be guided with step by step procedure to go abroad and study there.",
-        link:""
+        link: "https://studyabroad-hub.netlify.app/"
     },
     {
         id:5,
