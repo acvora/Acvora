@@ -12,7 +12,7 @@ import PlaceCard from "../components/PlaceCard";
 import RegistrationModal from "../Modals/RegistrationModal";
 import NewsAlerts from "./NewsAlerts.jsx";
 import Testimonials from "../components/Testimonials";
-import TopColleges from "../components/TopColleges";
+import TopCollagesAndUniversities from "../components/TopCollegesAndUniversities";
 
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -35,6 +35,7 @@ const Home = () => {
       <Header />
       {/* <TopColleges /> */}
       <CollegeCard />
+      <TopCollagesAndUniversities />
       <PlaceCard />
       <HigherStudies />
       <Marquee />

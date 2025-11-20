@@ -8,6 +8,7 @@ import Info from "../components/Info";
 import Marquee from "../components/Marquee";
 import Newsletter from "../components/Newsletter";
 import PlaceCard from "../components/PlaceCard";
+import TopCollegesAndUniversities from "../components/TopCollegesAndUniversities";
 
 import RegistrationModal from "../Modals/RegistrationModal";
 import NewsAlerts from "../components/NewsAlerts";
@@ -35,6 +36,7 @@ const Home = () => {
       <Header />
       {/* <TopColleges /> */}
       <CollegeCard />
+      <TopCollegesAndUniversities />
       <PlaceCard />
       <HigherStudies />
       <Marquee />
