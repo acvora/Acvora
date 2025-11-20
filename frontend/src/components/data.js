@@ -84,7 +84,7 @@ export const infodata = [
         id:2,
         heading: "Free Counselling By Experts",
         para: "Get Free Counselling from our experts and good advice on choosing the best-suited career for your ward",
-        link:"/counsellingpage" 
+        link:"/counselling" 
     },
     {
         id:3,
