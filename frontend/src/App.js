@@ -52,6 +52,7 @@ import UniversityRegister from "./Pages/UniversityRegister";
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <ToastContainer />
 
       <Routes>
@@ -73,10 +74,12 @@ function App() {
         <Route path="/examat" element={<Examat />} />
         <Route path="/newsfeed" element={<NewsFeed />} /> {/* ✅ Fixed path to match Navbar: /newsfeed (lowercase) */}
 
+        {/* ✅ New Profile Redirect Route to match Navbar (assumed /profile link) */}
+        <Route path="/profile" element={<RedirectToProfile />} />
+
         {/* ✅ Updated My Profile Routes to match Navbar */}
         <Route path="/myprofile" element={<MyProfile />} />
-<Route path="/myprofile/:id" element={<MyProfile />} />
-
+        <Route path="/myprofile/:id" element={<MyProfile />} />
 
         {/* ✅ New My Courses Route - Updated to match Navbar /course */}
         <Route path="/course" element={<MySavedCourses />} /> {/* ✅ Changed from /my-courses to /course to match Navbar */}

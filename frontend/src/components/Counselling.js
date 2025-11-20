@@ -46,7 +46,7 @@ function HeroSection() {
         onClick={handleScrollToBooking}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="px-8 py-3 rounded-xl bg-gradient-to-r from-gray-900 to-gray-900 text-yellow-400 font-semibold shadow-lg hover:shadow-xl transition"
+        className="px-8 py-3 rounded-xl bg-gray-900 text-yellow-400 font-semibold shadow-lg hover:shadow-xl transition"
       >
         Book Your Session Now
       </motion.button>
@@ -105,7 +105,7 @@ function OurImpact() {
     { value: "50+", label: "Partner Universities" },
   ];
   return (
-    <section className="bg-gray-900  text-yellow-500 py-16 pt-6 pb-12 px-6">
+    <section className="bg-gray-900 text-yellow-500 py-16 pt-6 pb-12 px-6">
       <motion.h2
         initial={{ opacity: 0, y: -20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -126,7 +126,7 @@ function OurImpact() {
             className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-xl transition"
           >
             <h3 className="text-4xl font-bold text-gray-900">{stat.value}</h3>
-            <p className="mt-2 text-lg">{stat.label}</p>
+            <p className="mt-2 text-lg text-gray-900">{stat.label}</p>
           </motion.div>
         ))}
       </div>
@@ -327,7 +327,7 @@ function TrustSafety() {
   ];   
   return (
     <section className="bg-gray-900 py-16 px-6 text-center">
-      <h2 className="text-3xl font-bold text-yellow-500 mb-8">Trust & Safety</h2>
+      <h2 className="text-3xl font-bold text-yellow-500 mb-8">Trust &amp; Safety</h2>
       <div className="flex flex-col md:flex-row justify-center gap-6">
         {points.map((pt, idx) => (
           <motion.div
@@ -646,7 +646,7 @@ function BookingFlow() {
                 onChange={(e) => handleChange('agreeTerms', e.target.checked)}
                 className="mr-2 accent-yellow-400"
               />{" "}
-              I agree to the Terms & Conditions
+              I agree to the Terms &amp; Conditions
             </label>
             <label className="flex items-center mb-2 text-gray-900">
               <input
@@ -666,7 +666,7 @@ function BookingFlow() {
               ✅ Booking Confirmed
             </h3>
             <p className="text-gray-600">
-              Your session has been booked. Check ‘My Account > My Sessions’
+              Your session has been booked. Check ‘My Account &gt; My Sessions’
               for details.
             </p>
           </div>
@@ -729,7 +729,7 @@ export default function Counselling() {
   return (
     <>
     <Navbar />
-    <div className="min-h-screen bg-gray-100 via-white to-yellow-100">
+    <div className="min-h-screen bg-gradient-to-b from-gray-100 via-white to-rgb(243, 244, 246)">
       <HeroSection />
       <WhyChooseUs />
       <OurImpact />
