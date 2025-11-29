@@ -237,7 +237,7 @@ const Navbar = () => {
                     onClick={() => setUserMenuOpen(false)}
                     className="block px-4 py-2 hover:bg-yellow-500"
                   >
-                    Exams
+                    My Exams
                   </NavLink>
                   <NavLink
                     to="/settings"
