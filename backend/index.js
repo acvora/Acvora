@@ -1,3 +1,4 @@
+// index.js
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -27,6 +28,7 @@ import profileRoutes from "./routes/profile.js";
 import savedCoursesRoutes from "./routes/savedCourses.js";
 import savedScholarshipsRoutes from "./routes/savedScholarships.js";
 import counsellingRoutes from "./routes/counselling.js";
+import savedExamsRouter from "./routes/savedExams.js";
 
 dotenv.config();
 const app = express();
@@ -46,8 +48,6 @@ const ALLOWED_ORIGINS = [
   "https://acvora-h45fy0xph-acvoras-projects.vercel.app",
   "https://acvora-g3qlp8vsi-acvoras-projects.vercel.app"
 ];
-
-
 
 
 // ✅ must be above express.json and all routes
@@ -491,6 +491,8 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/savedCourses", savedCoursesRoutes);
 app.use("/api/savedScholarships", savedScholarshipsRoutes);
 app.use("/api/counselling", counsellingRoutes);
+console.log("Mounting savedExams router at /api/savedExams");
+app.use("/api/savedExams", savedExamsRouter);
 
 /* ------------------------ Health check ------------------------ */
 app.get("/api/health", (req, res) => {

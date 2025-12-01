@@ -30,6 +30,7 @@ import CourseRegister from "./Pages/CourseRegister";
 import MyProfile from "./Pages/MyProfile";
 import CoursePage from "./Pages/CoursePage";
 import SavedScholarships from "./Pages/SavedScholarships";
+import MySavedExams from "./Pages/MySavedExams"; // New Saved Exams Page
 
 // Footer Pages
 import CollegeReview from './FooterPages/topExam/CollegeReview';
@@ -107,6 +108,7 @@ function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/about" element={<Abtnv />} />
+        <Route path="/mysavedexams" element={<MySavedExams />} /> {/* New Saved Exams Route */}
 
         {/* ✅ TODO: Add missing routes for Navbar dropdown if needed */}
         {/* <Route path="/study-material" element={<StudyMaterial />} /> */}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loader2, BookOpen, Users, ExternalLink, Award } from "lucide-react"; // Assuming Lucide React for icons; install if needed: npm i lucide-react
+import { Loader2, BookOpen, Users, ExternalLink, Award } from "lucide-react";
 import Navbar from "../components/Navbar";
 
 const MySavedExams = () => {
@@ -23,12 +23,13 @@ const MySavedExams = () => {
     axios
       .get(`https://acvora-07fo.onrender.com/api/savedExams/${userId}`)
       .then((res) => {
-        setSavedExams(res.data);
+        setSavedExams(res.data || []);
+        // keep localStorage backup in sync
+        localStorage.setItem("savedExams", JSON.stringify(res.data || []));
       })
       .catch((err) => {
         console.error("Error fetching saved exams:", err);
-        setError("Failed to load saved exams. Please try again.");
-        // Fallback to localStorage if needed
+        setError("Failed to load saved exams. Showing local backup if available.");
         const saved = localStorage.getItem("savedExams");
         if (saved) {
           setSavedExams(JSON.parse(saved));
@@ -39,15 +40,29 @@ const MySavedExams = () => {
       });
   }, [navigate]);
 
-  const handleUnsave = async (examId) => {
+  const handleUnsave = async (e, examId) => {
+    // prevent the card click navigation
+    if (e && typeof e.stopPropagation === "function") e.stopPropagation();
+
     const userId = localStorage.getItem("userId");
     if (!userId) return;
 
     try {
       await axios.delete(`https://acvora-07fo.onrender.com/api/savedExams/${userId}/${examId}`);
-      setSavedExams(savedExams.filter((exam) => exam.examId !== examId));
+      // update UI and localStorage backup
+      setSavedExams((prev) => {
+        const updated = prev.filter((exam) => exam.examId !== examId);
+        localStorage.setItem("savedExams", JSON.stringify(updated));
+        return updated;
+      });
     } catch (err) {
       console.error("Error unsaving exam:", err);
+      // fallback: still remove from UI to keep UX smooth, but warn in console
+      setSavedExams((prev) => {
+        const updated = prev.filter((exam) => exam.examId !== examId);
+        localStorage.setItem("savedExams", JSON.stringify(updated));
+        return updated;
+      });
     }
   };
 
@@ -65,19 +80,14 @@ const MySavedExams = () => {
     );
   }
 
-  if (error) {
+  if (error && savedExams.length === 0) {
     return (
       <>
         <Navbar />
         <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 flex items-center justify-center px-6 py-8">
           <div className="text-center max-w-md">
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
-            </div>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-            >
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>
+            <button onClick={() => window.location.reload()} className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors">
               Retry
             </button>
           </div>
@@ -94,13 +104,8 @@ const MySavedExams = () => {
           <div className="text-center max-w-md">
             <Award className="h-24 w-24 text-gray-400 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-gray-800 mb-4">No Saved Exams Yet</h2>
-            <p className="text-gray-600 mb-6">
-              Start exploring our exams and save the ones that interest you to access them here anytime.
-            </p>
-            <a
-              href="/exams"
-              className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-md hover:shadow-lg"
-            >
+            <p className="text-gray-600 mb-6">Start exploring our exams and save the ones that interest you to access them here anytime.</p>
+            <a href="/exams" className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-md hover:shadow-lg">
               <ExternalLink className="h-5 w-5 mr-2" />
               Explore Exams
             </a>
@@ -125,10 +130,11 @@ const MySavedExams = () => {
             {savedExams.map((exam) => (
               <div
                 key={exam.examId}
-                className="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden relative"
+                className="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden relative cursor-pointer"
+                onClick={() => (window.location.href = `/exampage/${exam.examId}`)}
               >
                 <button
-                  onClick={() => handleUnsave(exam.examId)}
+                  onClick={(e) => handleUnsave(e, exam.examId)}
                   className="absolute top-4 right-4 z-10 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full transition-colors opacity-0 group-hover:opacity-100"
                   title="Unsave Exam"
                 >
@@ -136,22 +142,19 @@ const MySavedExams = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
-                <div className="p-6" onClick={() => navigate(`/exampage/${exam.examId}`)}>
+
+                <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
-                      Saved
-                    </div>
+                    <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">Saved</div>
                   </div>
-                  <h2 className="font-bold text-xl text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {exam.examName}
-                  </h2>
+                  <h2 className="font-bold text-xl text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">{exam.examName}</h2>
                   <div className="flex items-center text-gray-600 mb-2">
                     <Users className="h-4 w-4 mr-2" />
-                    <span className="text-sm">Conducting Body: {exam.conductingBody}</span>
+                    <span className="text-sm">Conducting Body: {exam.conductingBody || "—"}</span>
                   </div>
                   <div className="flex items-center text-gray-600 mb-2">
                     <Award className="h-4 w-4 mr-2" />
-                    <span className="text-sm">Next Event: {exam.nextEvent}</span>
+                    <span className="text-sm">Next Event: {exam.nextEvent || "TBD"}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-gray-500">Quick Access</span>
