@@ -7,7 +7,7 @@ const Newsletter = () => {
       <div className="bg-gray-900 shadow-lg py-10 px-6 flex flex-col gap-6 items-center">
 
         {/* Header + Search Bar */}
-        <div className="w-full max-w-4xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="w-full max-w-7xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h2 className="text-3xl font-bold text-white text-center md:text-left">
             Trending Exams
           </h2>
@@ -24,7 +24,7 @@ const Newsletter = () => {
         </div>
 
         {/* Marquee Section 1 - Trending Exam News */}
-        <div className="w-full max-w-4xl bg-white/10 rounded-xl p-3">
+        <div className="w-full max-w-7xl bg-white/10 rounded-xl p-3">
           <marquee
             className="text-lg font-semibold text-yellow-100 tracking-wide"
             behavior="scroll"
@@ -36,7 +36,7 @@ const Newsletter = () => {
         </div>
 
         {/* NEW SECTION - Other Latest News */}
-        <div className="w-full max-w-4xl bg-white/10 rounded-xl p-3">
+        <div className="w-full max-w-7xl bg-white/10 rounded-xl p-3">
           <marquee
             className="text-lg font-semibold text-blue-200 tracking-wide"
             behavior="scroll"

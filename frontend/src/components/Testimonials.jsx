@@ -48,7 +48,7 @@ export default function Testimonials() {
 
   return (
     <section className="bg-gradient-to-b from-gray-50 to-gray-100 py-16 relative">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6">
         <h2 className="text-4xl font-bold text-center mb-12 text-gray-900">
           Testimonials & Success Stories
         </h2>
@@ -67,7 +67,7 @@ export default function Testimonials() {
             reverseDirection: true,
           }}
           loop={true}
-          spaceBetween={20}
+          spaceBetween={40}
           breakpoints={{
             320: { slidesPerView: 1 },
             768: { slidesPerView: 2 },

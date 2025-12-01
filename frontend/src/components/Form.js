@@ -204,7 +204,7 @@ const CompactForm = () => {
               </div>
             </div>
 
-            <button type="submit" className="cf-submit">Get Options</button>
+            <button type="submit" className="cf-submit">Submit</button>
           </form>
         </div>
       </div>
