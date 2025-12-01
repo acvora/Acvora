@@ -4,8 +4,8 @@ import { BiSearch } from "react-icons/bi";
 const Newsletter = () => {
   return (
     <section className="mx-auto">
-      <div className="bg-gray-900  shadow-lg py-10 px-6 flex flex-col gap-6 items-center">
-        
+      <div className="bg-gray-900 shadow-lg py-10 px-6 flex flex-col gap-6 items-center">
+
         {/* Header + Search Bar */}
         <div className="w-full max-w-4xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h2 className="text-3xl font-bold text-white text-center md:text-left">
@@ -23,7 +23,7 @@ const Newsletter = () => {
           </div>
         </div>
 
-        {/* Marquee Section */}
+        {/* Marquee Section 1 - Trending Exam News */}
         <div className="w-full max-w-4xl bg-white/10 rounded-xl p-3">
           <marquee
             className="text-lg font-semibold text-yellow-100 tracking-wide"
@@ -34,6 +34,20 @@ const Newsletter = () => {
             registration opens next week | CBSE Class 12 results expected soon
           </marquee>
         </div>
+
+        {/* NEW SECTION - Other Latest News */}
+        <div className="w-full max-w-4xl bg-white/10 rounded-xl p-3">
+          <marquee
+            className="text-lg font-semibold text-blue-200 tracking-wide"
+            behavior="scroll"
+            direction="left"
+          >
+            SSC GD 2025 notification releasing soon | UPSC releases new exam
+            pattern update | State Board announces improvements in curriculum |
+            CUET UG 2025 syllabus likely to be revised
+          </marquee>
+        </div>
+
       </div>
     </section>
   );

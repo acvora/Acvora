@@ -1,191 +1,215 @@
-
-/*Form Section
-.form-section {
-  padding: 2rem;
+/* Root section */
+.cf-section {
+  padding: 1.5rem;
+  background: #f3f4f6; /* gray-50 */
+  min-height: 60vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #e2e8f0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #111827;
 }
 
-@media (min-width: 1024px) {
-  .form-section {
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: flex-start;
-  }
-}
-
-.form-container {
+/* Container card */
+.cf-container {
   width: 100%;
-  max-width: 896px;
+  max-width: 64rem; /* same as max-w-4xl */
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(17,24,39,0.08);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border-radius: 0.75rem;
 }
 
-@media (min-width: 1024px) {
-  .form-container {
-    margin-left: 0;
-    margin-right: 0;
-    padding: 2.5rem;
-  }
+/* Left (art) and Right (form) */
+.cf-left,
+.cf-right {
+  box-sizing: border-box;
+  padding: 1.5rem;
 }
 
-.form-heading {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1.5;
-  letter-spacing: 0.025em;
+.cf-left {
+  background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%); /* yellow-50 to white */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Art layout */
+.cf-art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
   text-align: center;
-  margin-bottom: 2rem;
+  padding: 0.5rem;
 }
 
-@media (min-width: 640px) {
-  .form-heading {
-    font-size: 1.5rem;
-  }
+.cf-image {
+  width: 100%;
+  height: 15rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
 }
 
-@media (min-width: 1024px) {
-  .form-heading {
-    font-size: 1.875rem;
-  }
+.cf-art-text h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
 }
 
-.heading-gradient {
-  background: linear-gradient(to right, #2563eb, #4f46e5, #7c3aed);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+.cf-art-text p {
+  margin: 0;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280; /* gray-600 */
 }
 
-.heading-text {
-  color: #374151;
+/* Form column */
+.cf-right {
+  padding: 1.25rem;
 }
 
-.form-grid {
+/* Form structure */
+.cf-form {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem 2rem;
-  justify-items: start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
 }
 
-@media (min-width: 768px) {
-  .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.form-group {
+/* Field */
+.cf-field {
   display: flex;
   flex-direction: column;
+}
+
+.cf-label {
+  font-size: 0.6875rem; /* text-xs */
+  color: #374151; /* gray-700 */
+  margin-bottom: 0.35rem;
+}
+
+.cf-input,
+.cf-select,
+.cf-country-select {
+  border: 1px solid #e5e7eb; /* gray-200 */
+  background: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+/* Focus */
+.cf-input:focus,
+.cf-select:focus,
+.cf-country-select:focus {
+  box-shadow: 0 0 0 4px rgba(245,158,11,0.12); /* yellow ring */
+  border-color: #f59e0b;
+}
+
+/* Row layout (two columns) */
+.cf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
-.form-group-full {
-  grid-column: span 1;
+/* Country-specific small box */
+.cf-country-field {
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-width: 768px) {
-  .form-group-full {
-    grid-column: span 2;
-  }
+/* Make the country select narrower */
+.cf-country-select {
+  width: 7rem; /* corresponds to w-28 */
+  height: 2rem; /* h-8 */
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem; /* text-xs */
+  display: inline-block;
 }
 
-.form-submit {
-  margin-top: 2.5rem;
-}
-
-@media (min-width: 768px) {
-  .form-submit {
-    margin-top: 3rem;
-  }
-}
-
-.form-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-}
-
-.form-label span {
-  color: #ef4444; 
-}
-
-.form-input {
-  background-color: #ededed;
-  font-size: 0.875rem;
-  color: #000000;
-  padding: 0.625rem;
-  font-weight: 500;
-  outline: none;
-  border: 2px solid #777771;
-  border-radius: 0.375rem;
-  width: fit-content;
-  min-width: 12rem;
-}
-
-.form-input:hover {
-  border-color: #3b82f6;
-}
-
-.form-textarea {
-  background-color: #ededed;
-  font-size: 0.875rem;
-  color: #000000;
-  padding: 0.625rem;
-  font-weight: 500;
-  outline: none;
-  border: 2px solid #777771;
-  border-radius: 0.375rem;
-  width: fit-content;
-  min-width: 12rem;
-}
-
-.form-textarea:hover {
-  border-color: #3b82f6;
-}
-
-.form-button {
-  padding: 0.75rem;
-  background: linear-gradient(to right, #2563eb, #4f46e5, #7c3aed);
-  color: #ffffff;
+/* Submit */
+.cf-submit {
+  margin-top: 0.25rem;
+  width: 100%;
+  background: #111827; /* gray-800 */
+  color: #fff;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
   font-weight: 600;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  width: fit-content;
-  min-width: 10rem;
-  transition: opacity 0.2s;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
 }
 
-.form-button:hover {
-  opacity: 0.9;
+.cf-submit:hover {
+  background: #f59e0b; /* yellow-500 */
+  color: #111827;
 }
 
-.form-image-container {
-  margin-top: 2.5rem;
-  max-width: 18rem;
+/* Toasts */
+.cf-toast {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.875rem;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.12);
 }
 
-@media (min-width: 640px) {
-  .form-image-container {
-    max-width: 26rem;
+.cf-toast-success {
+  background: #10b981; /* green-500 */
+}
+
+.cf-toast-error {
+  background: #ef4444; /* red-500 */
+}
+
+/* Responsive: at medium screens and up, place left & right side-by-side */
+@media (min-width: 768px) {
+  .cf-container {
+    flex-direction: row;
+  }
+
+  .cf-left,
+  .cf-right {
+    width: 50%;
+    padding: 1.5rem;
+  }
+
+  .cf-art {
+    justify-content: flex-start;
+  }
+
+  .cf-art-text h3 {
+    font-size: 1.0625rem;
+  }
+
+  .cf-image {
+    height: 18rem;
   }
 }
 
-@media (min-width: 1024px) {
-  .form-image-container {
-    max-width: 29rem;
-    margin-top: -1px;
-    padding-top: 1rem;
+/* If you want the country box even smaller on very small screens */
+@media (max-width: 420px) {
+  .cf-country-select {
+    width: 5.25rem;
+  }
+
+  .cf-row {
+    grid-template-columns: 1fr;
   }
 }
-
-.form-image {
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}  ===== Add Student Form ===== */

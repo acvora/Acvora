@@ -347,10 +347,7 @@ function TrustSafety() {
 }
 
 // -------------------
-// Booking Flow (with animations)
-// -------------------
-// -------------------
-// Multi-step Booking Flow
+// Booking Flow (refactored to 3 steps on single page)
 // -------------------
 function BookingFlow() {
   const [step, setStep] = useState(1);
@@ -360,17 +357,19 @@ function BookingFlow() {
     mobileNumber: '',
     ageDob: '',
     cityState: '',
+    currentClass: '',
     counselingType: '',
     sessionMode: '',
     sessionDate: '',
     timeSlot: '',
-    currentClass: '',
     intendedCourse: '',
     questions: '',
     paymentMethod: '',
     agreeTerms: false,
     understandNonRefundable: false,
   });
+
+  const stepLabels = ["Basic Details", "What You're Looking For", "Payment Terms"];
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -379,19 +378,11 @@ function BookingFlow() {
   const validateStep = () => {
     switch (step) {
       case 1:
-        return formData.fullName && formData.email && formData.mobileNumber && formData.ageDob && formData.cityState;
+        return formData.fullName && formData.email && formData.mobileNumber && formData.ageDob && formData.cityState && formData.currentClass;
       case 2:
-        return formData.counselingType;
+        return formData.counselingType && formData.sessionMode && formData.sessionDate && formData.timeSlot && formData.intendedCourse && formData.questions;
       case 3:
-        return formData.sessionMode;
-      case 4:
-        return formData.sessionDate && formData.timeSlot;
-      case 5:
-        return formData.currentClass && formData.intendedCourse && formData.questions;
-      case 6:
-        return formData.paymentMethod;
-      case 7:
-        return formData.agreeTerms && formData.understandNonRefundable;
+        return formData.paymentMethod && formData.agreeTerms && formData.understandNonRefundable;
       default:
         return true;
     }
@@ -420,12 +411,13 @@ function BookingFlow() {
       "mobileNumber",
       "ageDob",
       "cityState",
+      "currentClass",
       "counselingType",
       "sessionMode",
       "sessionDate",
       "timeSlot",
-      "currentClass",
       "intendedCourse",
+      "questions",
       "paymentMethod",
       "agreeTerms",
       "understandNonRefundable",
@@ -455,7 +447,7 @@ function BookingFlow() {
       // Success
       console.log("Counselling booked:", response.data);
       alert("✅ Your session has been successfully booked!");
-      setStep(8); // show confirmation step
+      setStep(4); // show confirmation step
     } catch (error) {
       console.error("Error booking counselling:", error);
 
@@ -480,201 +472,222 @@ function BookingFlow() {
       </motion.h2>
 
       <div className="bg-white rounded-2xl shadow-lg p-8">
-        {/* Steps content */}
-        {step === 1 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              1. Personal Information
-            </h3>
-            <input
-              placeholder="Full Name"
-              value={formData.fullName}
-              onChange={(e) => handleChange('fullName', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-            <input
-              placeholder="Email Address"
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleChange('email', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-            <input
-              placeholder="Mobile Number"
-              type="tel"
-              value={formData.mobileNumber}
-              onChange={(e) => handleChange('mobileNumber', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-            <input
-              placeholder="Age / Date of Birth"
-              value={formData.ageDob}
-              onChange={(e) => handleChange('ageDob', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-            <input
-              placeholder="City & State"
-              value={formData.cityState}
-              onChange={(e) => handleChange('cityState', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
+        {/* Progress Indicator with lines and labels */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col items-center">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 1 ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
+              1
+            </div>
+            <span className="text-xs mt-1 text-gray-600">Basic Details</span>
           </div>
-        )}
+          <div className={`flex-1 h-0.5 mx-4 rounded-full ${step >= 2 ? 'bg-yellow-500' : 'bg-gray-200'}`}></div>
+          <div className="flex flex-col items-center">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 2 ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
+              2
+            </div>
+            <span className="text-xs mt-1 text-gray-600">What You're Looking For</span>
+          </div>
+          <div className={`flex-1 h-0.5 mx-4 rounded-full ${step >= 3 ? 'bg-yellow-500' : 'bg-gray-200'}`}></div>
+          <div className="flex flex-col items-center">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${step >= 3 ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
+              3
+            </div>
+            <span className="text-xs mt-1 text-gray-600">Payment Terms</span>
+          </div>
+        </div>
 
-        {step === 2 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              2. Counseling Type
-            </h3>
-            <select 
-              value={formData.counselingType}
-              onChange={(e) => handleChange('counselingType', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+        {/* Steps content - all on single page, but navigated via step state */}
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
             >
-              <option value="">Select Counseling Type</option>
-              <option value="Career Counseling">Career Counseling</option>
-              <option value="Education Counseling">Education Counseling</option>
-              <option value="Study Abroad Counseling">Study Abroad Counseling</option>
-            </select>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              3. Preferred Session Mode
-            </h3>
-            <select 
-              value={formData.sessionMode}
-              onChange={(e) => handleChange('sessionMode', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            >
-              <option value="">Select Session Mode</option>
-              <option value="Video Call (Zoom/Google Meet)">Video Call (Zoom/Google Meet)</option>
-              <option value="Audio Call">Audio Call</option>
-              <option value="Chat Counseling">Chat Counseling</option>
-            </select>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              4. Time Slot Selection
-            </h3>
-            <input
-              type="date"
-              value={formData.sessionDate}
-              onChange={(e) => handleChange('sessionDate', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-            <select 
-              value={formData.timeSlot}
-              onChange={(e) => handleChange('timeSlot', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            >
-              <option value="">Select Time Slot</option>
-              <option value="Morning (10–1)">Morning (10–1)</option>
-              <option value="Afternoon (2–5)">Afternoon (2–5)</option>
-              <option value="Evening (6–9)">Evening (6–9)</option>
-            </select>
-          </div>
-        )}
-
-        {step === 5 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              5. Additional Information
-            </h3>
-            <select 
-              value={formData.currentClass}
-              onChange={(e) => handleChange('currentClass', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            >
-              <option value="">Select Current Stage</option>
-              <option value="Class 10">Class 10</option>
-              <option value="Class 12">Class 12</option>
-              <option value="UG">UG</option>
-              <option value="PG">PG</option>
-            </select>
-            <input
-              placeholder="Intended Course/Field"
-              value={formData.intendedCourse}
-              onChange={(e) => handleChange('intendedCourse', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-            <textarea
-              placeholder="Questions / Concerns"
-              rows={3}
-              value={formData.questions}
-              onChange={(e) => handleChange('questions', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            />
-          </div>
-        )}
-
-        {step === 6 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              6. Payment
-            </h3>
-            <p className="mb-3 font-medium text-gray-900">
-              First Session Fee: ₹49 only
-            </p>
-            <select 
-              value={formData.paymentMethod}
-              onChange={(e) => handleChange('paymentMethod', e.target.value)}
-              className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
-            >
-              <option value="">Select Payment Method</option>
-              <option value="UPI">UPI</option>
-              <option value="Debit / Credit Card">Debit / Credit Card</option>
-              <option value="Net Banking">Net Banking</option>
-            </select>
-          </div>
-        )}
-
-        {step === 7 && (
-          <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              7. Agreement
-            </h3>
-            <label className="flex items-center mb-2 text-gray-900">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                1. Basic Details
+              </h3>
               <input
-                type="checkbox"
-                checked={formData.agreeTerms}
-                onChange={(e) => handleChange('agreeTerms', e.target.checked)}
-                className="mr-2 accent-yellow-400"
-              />{" "}
-              I agree to the Terms &amp; Conditions
-            </label>
-            <label className="flex items-center mb-2 text-gray-900">
+                placeholder="Full Name"
+                value={formData.fullName}
+                onChange={(e) => handleChange('fullName', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
               <input
-                type="checkbox"
-                checked={formData.understandNonRefundable}
-                onChange={(e) => handleChange('understandNonRefundable', e.target.checked)}
-                className="mr-2 accent-yellow-400"
-              />{" "}
-              I understand the fee is non-refundable if missed
-            </label>
-          </div>
-        )}
+                placeholder="Email Address"
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+              <input
+                placeholder="Mobile Number"
+                type="tel"
+                value={formData.mobileNumber}
+                onChange={(e) => handleChange('mobileNumber', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+              <input
+                type="date"
+                value={formData.ageDob}
+                onChange={(e) => handleChange('ageDob', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+              <input
+                placeholder="City & State"
+                value={formData.cityState}
+                onChange={(e) => handleChange('cityState', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+              <select 
+                value={formData.currentClass}
+                onChange={(e) => handleChange('currentClass', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              >
+                <option value="">Select Current Stage</option>
+                <option value="Class 10">Class 10</option>
+                <option value="Class 12">Class 12</option>
+                <option value="UG">UG</option>
+                <option value="PG">PG</option>
+              </select>
+            </motion.div>
+          )}
 
-        {step === 8 && (
-          <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              ✅ Booking Confirmed
-            </h3>
-            <p className="text-gray-600">
-              Your session has been booked. Check ‘My Account &gt; My Sessions’
-              for details.
-            </p>
-          </div>
-        )}
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                2. What You're Looking For
+              </h3>
+              <select 
+                value={formData.counselingType}
+                onChange={(e) => handleChange('counselingType', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              >
+                <option value="">Select Counseling Type</option>
+                <option value="Career Counseling">Career Counseling</option>
+                <option value="Education Counseling">Education Counseling</option>
+                <option value="Study Abroad Counseling">Study Abroad Counseling</option>
+              </select>
+              <select 
+                value={formData.sessionMode}
+                onChange={(e) => handleChange('sessionMode', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              >
+                <option value="">Select Session Mode</option>
+                <option value="Video Call (Zoom/Google Meet)">Video Call (Zoom/Google Meet)</option>
+                <option value="Audio Call">Audio Call</option>
+                <option value="Chat Counseling">Chat Counseling</option>
+              </select>
+              <input
+                type="date"
+                value={formData.sessionDate}
+                onChange={(e) => handleChange('sessionDate', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+              <select 
+                value={formData.timeSlot}
+                onChange={(e) => handleChange('timeSlot', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              >
+                <option value="">Select Time Slot</option>
+                <option value="Morning (10–1)">Morning (10–1)</option>
+                <option value="Afternoon (2–5)">Afternoon (2–5)</option>
+                <option value="Evening (6–9)">Evening (6–9)</option>
+              </select>
+              <input
+                placeholder="Intended Course/Field"
+                value={formData.intendedCourse}
+                onChange={(e) => handleChange('intendedCourse', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+              <textarea
+                placeholder="Questions / Concerns"
+                rows={3}
+                value={formData.questions}
+                onChange={(e) => handleChange('questions', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              />
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div
+              key="step3"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                3. Final Payment Terms
+              </h3>
+              <p className="mb-3 font-medium text-gray-900">
+                First Session Fee: <span className="text-yellow-500 font-bold">₹49 only</span>
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                Secure payment. Non-refundable if session is missed.
+              </p>
+              <select 
+                value={formData.paymentMethod}
+                onChange={(e) => handleChange('paymentMethod', e.target.value)}
+                className="w-full border border-gray-400 rounded-lg px-4 py-2 mb-3 focus:ring-2 focus:ring-yellow-400"
+              >
+                <option value="">Select Payment Method</option>
+                <option value="UPI">UPI</option>
+                <option value="Debit / Credit Card">Debit / Credit Card</option>
+                <option value="Net Banking">Net Banking</option>
+              </select>
+              <label className="flex items-center mb-2 text-gray-900">
+                <input
+                  type="checkbox"
+                  checked={formData.agreeTerms}
+                  onChange={(e) => handleChange('agreeTerms', e.target.checked)}
+                  className="mr-2 accent-yellow-400"
+                />{" "}
+                I agree to the Terms &amp; Conditions
+              </label>
+              <label className="flex items-center mb-2 text-gray-900">
+                <input
+                  type="checkbox"
+                  checked={formData.understandNonRefundable}
+                  onChange={(e) => handleChange('understandNonRefundable', e.target.checked)}
+                  className="mr-2 accent-yellow-400"
+                />{" "}
+                I understand the fee is non-refundable if missed
+              </label>
+            </motion.div>
+          )}
+
+          {step === 4 && (
+            <motion.div
+              key="step4"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-center"
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                ✅ Booking Confirmed
+              </h3>
+              <p className="text-gray-600">
+                Your session has been booked. Check ‘My Account &gt; My Sessions’
+                for details.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Navigation */}
         <div className="flex justify-between mt-6">
-          {step > 1 && step < 8 && (
+          {step > 1 && step < 4 && (
             <button
               onClick={() => setStep(step - 1)}
               className="px-4 py-2 bg-yellow-300 text-gray-900 rounded-lg hover:bg-yellow-400 transition"
@@ -682,7 +695,7 @@ function BookingFlow() {
               Back
             </button>
           )}
-          {step < 7 && (
+          {step < 3 && (
             <button
               onClick={handleNext}
               className="ml-auto px-6 py-2 bg-yellow-400 text-gray-900 font-semibold rounded-lg shadow hover:bg-yellow-500 transition"
@@ -690,7 +703,7 @@ function BookingFlow() {
               Next
             </button>
           )}
-          {step === 7 && (
+          {step === 3 && (
             <button
               onClick={handleBook}
               className="ml-auto px-6 py-2 bg-yellow-500 text-gray-900 font-semibold rounded-lg shadow hover:bg-yellow-600 transition"
