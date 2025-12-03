@@ -8,9 +8,8 @@ import {
 
 const router = express.Router();
 
-// Public routes (no auth)
 router.post("/admin-scholarships", createAdminScholarship);
-router.get("/admin-scholarships", getAllAdminScholarships);
 router.get("/universities/:id/admin-scholarships", getAdminScholarshipsByUniversity);
+router.get("/admin-scholarships", getAllAdminScholarships);
 
 export default router;
