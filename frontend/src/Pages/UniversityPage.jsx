@@ -244,13 +244,6 @@ function UniversityPage() {
               </div>
 
               <div className="uni-banner-tags">
-                <div className="flex space-x-1 flex-wrap">
-                  {chips.map((chip, i) => (
-                    <span key={i} className="uni-chip">
-                      {chip}
-                    </span>
-                  ))}
-                </div>
                 <div className="flex space-x-1">
                   {university.students && (
                     <span className="review">{university.students} students</span>
@@ -258,6 +251,11 @@ function UniversityPage() {
                   {university.faculty && (
                     <span className="review">{university.faculty} faculty</span>
                   )}
+                  {chips.map((chip, i) => (
+                    <span key={i} className="uni-chip">
+                      {chip}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
