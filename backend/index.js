@@ -8,6 +8,7 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import util from "util";  // Added for route listing debug
 import UniversityRegistration from "./models/University.js";
 
 // Routes
@@ -505,6 +506,38 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running" });
 });
 
+/* ------------------------ Debug Helpers (TEMPORARY - Remove After Fixing) ------------------------ */
+// 1. Simple test endpoint
+app.get("/api/debug-test", (req, res) => {
+  res.json({ success: true, message: "Debug test OK", url: req.originalUrl });
+});
+
+// 2. Route-listing logger
+function listRoutes() {
+  const routes = [];
+  if (!app._router) {
+    console.log("No routes found on app yet.");
+    return;
+  }
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      const methods = Object.keys(middleware.route.methods).join(",").toUpperCase();
+      routes.push(`${methods} ${middleware.route.path}`);
+    } else if (middleware.name === "router") {
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          const methods = Object.keys(handler.route.methods).join(",").toUpperCase();
+          // handler.route.path is the child route (e.g., /admin-scholarships)
+          routes.push(`${methods} ${handler.route.path} (mounted at ${middleware.regexp})`);
+        }
+      });
+    }
+  });
+  console.log("=== Mounted Routes ===");
+  console.log(util.inspect(routes, { depth: 5 }));
+}
+listRoutes();  // Call it now to log on startup
+
 /* ------------------------ Error handler ------------------------ */
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
@@ -517,4 +550,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log('Database connected:');
   console.log("Health check available at /api/health");
+  console.log("Debug test available at /api/debug-test");  // Added for visibility
 });
