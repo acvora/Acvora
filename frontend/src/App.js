@@ -50,10 +50,6 @@ import UniversityDashboard from "./dashboard/UniversityDashboard";
 import UniversityPage from "./Pages/UniversityPage";
 import UniversityRegister from "./Pages/UniversityRegister";
 
-// admin scholarship
-import ScholarForm from "./Pages/ScholarForm";
-
-
 function App() {
   return (
     <BrowserRouter>
@@ -113,10 +109,6 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/about" element={<Abtnv />} />
         <Route path="/mysavedexams" element={<MySavedExams />} /> {/* New Saved Exams Route */}
-
-        {/* Admin Scholarship Route */}
-        <Route path="/scholar-form" element={<ScholarForm />} />
-
 
         {/* ✅ TODO: Add missing routes for Navbar dropdown if needed */}
         {/* <Route path="/study-material" element={<StudyMaterial />} /> */}
