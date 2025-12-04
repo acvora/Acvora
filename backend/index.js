@@ -48,11 +48,16 @@ cloudinary.config({
 /* ------------------------ CORS (FIXED) ------------------------ */
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
+
+  // Your live Vercel domains (all must be listed)
   "https://acvora-theta.vercel.app",
   "https://acvora-git-main-acvoras-projects.vercel.app",
-  "https://acvora-h45fy0xph-acvoras-projects.vercel.app",
-  "https://acvora-g3qlp8vsi-acvoras-projects.vercel.app"
+  "https://acvora-5d473m4wf-acvoras-projects.vercel.app",
+
+  // Your custom URL from render (frontend may call backend directly)
+  "https://acvora-07fo.onrender.com"
 ];
+
 
 
 // ✅ must be above express.json and all routes
