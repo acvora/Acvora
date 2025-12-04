@@ -30,6 +30,11 @@ import savedScholarshipsRoutes from "./routes/savedScholarships.js";
 import counsellingRoutes from "./routes/counselling.js";
 import savedExamsRouter from "./routes/savedExams.js";
 
+// admin scholar routes
+import adminScholarRoutes from "./routes/adminScholarRoutes.js";
+
+
+
 dotenv.config();
 const app = express();
 
@@ -493,6 +498,10 @@ app.use("/api/savedScholarships", savedScholarshipsRoutes);
 app.use("/api/counselling", counsellingRoutes);
 console.log("Mounting savedExams router at /api/savedExams");
 app.use("/api/savedExams", savedExamsRouter);
+
+// mount adminscholar API
+app.use("/api/adminscholar", adminScholarRoutes);
+
 
 /* ------------------------ Health check ------------------------ */
 app.get("/api/health", (req, res) => {

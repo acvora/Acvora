@@ -70,8 +70,8 @@ export default function ScholarForm() {
 
       const payload = { ...formData, tags };
 
-      // POST to backend. If API_URL already includes /api, this becomes /api/scholarships
-      const res = await axios.post(`${API_URL}/scholarships`, payload, {
+      // POST to backend. If API_URL already includes /api, this becomes /api/adminscholar
+      const res = await axios.post(`${API_URL}/adminscholar`, payload, {
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
