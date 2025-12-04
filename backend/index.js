@@ -49,12 +49,14 @@ cloudinary.config({
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
 
-  // Your live Vercel domains (all must be listed)
   "https://acvora-theta.vercel.app",
   "https://acvora-git-main-acvoras-projects.vercel.app",
   "https://acvora-5d473m4wf-acvoras-projects.vercel.app",
 
-  // Your custom URL from render (frontend may call backend directly)
+  "https://www.acvora-theta.vercel.app",
+  "https://www.acvora-git-main-acvoras-projects.vercel.app",
+  "https://www.acvora-5d473m4wf-acvoras-projects.vercel.app",
+
   "https://acvora-07fo.onrender.com"
 ];
 
