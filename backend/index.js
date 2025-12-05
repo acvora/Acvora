@@ -55,7 +55,13 @@ const ALLOWED_ORIGINS = [
   "https://acvora-git-main-acvoras-projects.vercel.app",
 
   // Render backend 
-  "https://acvora-07fo.onrender.com"
+  "https://acvora-07fo.onrender.com",
+  "https://acvora-5d473m4wf-acvoras-projects.vercel.app",
+  "https://acvora-6w211dktw-acvoras-projects.vercel.app",
+
+  "https://www.acvora-theta.vercel.app",
+  "https://www.acvora-git-main-acvoras-projects.vercel.app",
+  "https://www.acvora-5d473m4wf-acvoras-projects.vercel.app"
 ];
 
 
