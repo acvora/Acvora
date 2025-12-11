@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./ScholarForm.css"; // Import the separate CSS file
 
 /**
  * API_URL resolution (CRA-safe)
@@ -176,62 +177,54 @@ export default function ScholarForm() {
   const quotas = ["Yes", "No"];
 
   return (
-    <div className="bg-gray-100 flex justify-center py-10 px-4">
-      <div className="w-full max-w-6xl bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          Add Scholarship
-        </h1>
+    <div className="scholar-form-container">
+      <div className="scholar-form-card">
+        <div className="scholar-form-header">
+          <h1 className="scholar-form-title">Add New Scholarship</h1>
+          <p className="scholar-form-subtitle">Fill in the details to create a new opportunity</p>
+        </div>
 
         {error && (
-          <div className="mb-4 text-sm text-red-700 bg-red-100 p-3 rounded">
+          <div className="error-message">
+            <svg className="error-icon" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
             {error}
           </div>
         )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
+        <form onSubmit={handleSubmit} className="scholar-form-grid">
           {/* Scholarship Name */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Scholarship Name
-            </label>
+          <div className="form-field">
+            <label className="field-label">Scholarship Name <span className="required">*</span></label>
             <input
               name="name"
               value={formData.name}
               onChange={handleChange}
               required
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
+              className="field-input"
+              placeholder="e.g., National Merit Scholarship"
             />
           </div>
 
           {/* Provider */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Provider
-            </label>
+          <div className="form-field">
+            <label className="field-label">Provider <span className="required">*</span></label>
             <input
               name="provider"
               value={formData.provider}
               onChange={handleChange}
               required
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
+              className="field-input"
+              placeholder="e.g., Government of India"
             />
           </div>
 
           {/* Scholarship Type */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Scholarship Type
-            </label>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">Scholarship Type</label>
+            <select name="type" value={formData.type} onChange={handleChange} className="field-select">
+              <option value="">Select Type</option>
               {types.map((l, i) => (
                 <option key={i} value={l}>
                   {l}
@@ -241,17 +234,10 @@ export default function ScholarForm() {
           </div>
 
           {/* Category */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Category
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">Category</label>
+            <select name="category" value={formData.category} onChange={handleChange} className="field-select">
+              <option value="">Select Category</option>
               {categories.map((c, i) => (
                 <option key={i} value={c}>
                   {c}
@@ -261,16 +247,9 @@ export default function ScholarForm() {
           </div>
 
           {/* General Quota */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              General Quota
-            </label>
-            <select
-              name="generalQuota"
-              value={formData.generalQuota}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
+          <div className="form-field">
+            <label className="field-label">General Quota</label>
+            <select name="generalQuota" value={formData.generalQuota} onChange={handleChange} className="field-select">
               <option value="">Select</option>
               {quotas.map((q, i) => (
                 <option key={i} value={q}>
@@ -281,17 +260,10 @@ export default function ScholarForm() {
           </div>
 
           {/* State/Region */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              State/Region
-            </label>
-            <select
-              name="region"
-              value={formData.region}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">State/Region</label>
+            <select name="region" value={formData.region} onChange={handleChange} className="field-select">
+              <option value="">Select Region</option>
               {regions.map((r, i) => (
                 <option key={i} value={r}>
                   {r}
@@ -301,17 +273,10 @@ export default function ScholarForm() {
           </div>
 
           {/* Family Income Limit */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Family Income Limit
-            </label>
-            <select
-              name="income"
-              value={formData.income}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">Family Income Limit</label>
+            <select name="income" value={formData.income} onChange={handleChange} className="field-select">
+              <option value="">Select Income</option>
               {incomes.map((inc, idx) => (
                 <option key={idx} value={inc}>
                   {inc}
@@ -321,17 +286,10 @@ export default function ScholarForm() {
           </div>
 
           {/* Education Level */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Education Level
-            </label>
-            <select
-              name="educationLevel"
-              value={formData.educationLevel}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">Education Level</label>
+            <select name="educationLevel" value={formData.educationLevel} onChange={handleChange} className="field-select">
+              <option value="">Select Level</option>
               {levels.map((l, i) => (
                 <option key={i} value={l}>
                   {l}
@@ -341,17 +299,10 @@ export default function ScholarForm() {
           </div>
 
           {/* Benefits */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Benefits
-            </label>
-            <select
-              name="benefits"
-              value={formData.benefits}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">Benefits</label>
+            <select name="benefits" value={formData.benefits} onChange={handleChange} className="field-select">
+              <option value="">Select Benefits</option>
               {benefits.map((b, i) => (
                 <option key={i} value={b}>
                   {b}
@@ -361,31 +312,22 @@ export default function ScholarForm() {
           </div>
 
           {/* Deadline */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Deadline
-            </label>
+          <div className="form-field">
+            <label className="field-label">Deadline</label>
             <input
               type="date"
               name="deadline"
               value={formData.deadline}
               onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
+              className="field-input"
             />
           </div>
 
           {/* Status */}
-          <div className="flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Status
-            </label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="border border-gray-400 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500 outline-none"
-            >
-              <option value="">Select</option>
+          <div className="form-field">
+            <label className="field-label">Status <span className="required">*</span></label>
+            <select name="status" value={formData.status} onChange={handleChange} className="field-select">
+              <option value="">Select Status</option>
               {statuses.map((s, i) => (
                 <option key={i} value={s}>
                   {s}
@@ -395,43 +337,50 @@ export default function ScholarForm() {
           </div>
 
           {/* Description */}
-          <div className="md:col-span-3 flex flex-col">
-            <label className="text-left font-medium text-gray-700 mb-1">
-              Description
-            </label>
+          <div className="form-field full-width">
+            <label className="field-label">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Provide the detailed description..."
+              placeholder="Provide a detailed description of the scholarship..."
               rows="4"
-              className="border border-gray-400 rounded-lg px-3 py-2 text-gray-900 outline-none focus:ring-2 focus:ring-yellow-500 hover:border-yellow-500 transition w-full"
+              className="field-textarea"
             />
           </div>
 
           {/* Eligibility */}
-          <div className="md:col-span-3 flex flex-col">
-            <label className="text-left font-medium text-gray-900 mb-1">
-              Eligibility
-            </label>
+          <div className="form-field full-width">
+            <label className="field-label">Eligibility Criteria</label>
             <textarea
               name="eligibility"
               value={formData.eligibility}
               onChange={handleChange}
-              placeholder="Enter eligibility criteria (e.g., age limit, qualifications, etc.)"
+              placeholder="Enter eligibility criteria (e.g., age limit, qualifications, documents required, etc.)"
               rows="4"
-              className="border border-gray-400 rounded-lg px-4 py-3 text-gray-900 focus:ring-2 focus:ring-yellow-500 hover:border-yellow-500 outline-none resize-none transition w-full"
+              className="field-textarea"
             />
           </div>
 
           {/* Submit Button */}
-          <div className="md:col-span-3 flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-gray-900 text-white px-6 py-2 rounded-lg shadow hover:bg-yellow-500 transition disabled:opacity-60"
-            >
-              {loading ? "Saving..." : "Add Scholarship"}
+          <div className="form-field full-width submit-button-container">
+            <button type="submit" disabled={loading} className="submit-button">
+              {loading ? (
+                <>
+                  <svg className="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="spinner-path" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <svg className="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Add Scholarship
+                </>
+              )}
             </button>
           </div>
         </form>

@@ -9,7 +9,7 @@ export default function MultiStepForm() {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const totalSteps = 9;
+  const totalSteps = 5;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -79,8 +79,6 @@ export default function MultiStepForm() {
         alert("Please upload at least 3 banner images.");
         return;
       }
-    }
-    if (step === 2) {
       if (!files.aboutImages || files.aboutImages.length < 5) {
         alert("Please upload at least 5 about images.");
         return;
@@ -272,21 +270,8 @@ export default function MultiStepForm() {
      
       <header className="univ-header">
         <h1 className="univ-header-title">University Registration</h1>
-        <p className="univ-header-subtitle">Complete all 9 steps below</p>
+        <p className="univ-header-subtitle">Complete the registration form</p>
       </header>
-
-      <div className="univ-stepper">
-        {[...Array(totalSteps)].map((_, i) => (
-          <div
-            key={i}
-            className={`univ-stepper-circle ${step === i + 1 ? "active" : ""} ${
-              step > i + 1 ? "completed" : ""
-            }`}
-          >
-            {i + 1}
-          </div>
-        ))}
-      </div>
 
       <main className="univ-main-container">
         <form
@@ -296,7 +281,7 @@ export default function MultiStepForm() {
           {step === 1 && (
             <div className="univ-form-step grid-3">
               <h3 className="univ-step-title">
-                Step 1: Basic Info + Hero Section
+                Step 1: University Basics & Hero/About
               </h3>
               <input
                 name="instituteName"
@@ -371,12 +356,6 @@ export default function MultiStepForm() {
                 accept="image/*"
                 onChange={handleFileChange}
               />
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 2: About Section</h3>
               <textarea
                 name="description"
                 placeholder="About the University (Detailed Description)"
@@ -395,11 +374,9 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">
-                Step 3: Contact & Info Section
-              </h3>
+              <h3 className="univ-step-title">Step 2: Contact & Campus Info</h3>
               <input
                 name="address"
                 placeholder="Campus Address"
@@ -493,11 +470,9 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">
-                Step 4: Courses, Fees & Cutoffs
-              </h3>
+              <h3 className="univ-step-title">Step 3: Academics & Placements</h3>
               <label>Upload Courses & Fees Excel (courses.xlsx)</label>
               <input
                 type="file"
@@ -520,14 +495,6 @@ export default function MultiStepForm() {
                 onChange={handleChange}
                 title="List popular courses for info section."
               />
-            </div>
-          )}
-
-          {step === 5 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 5: Placements</h3>
-
-              {/* Placement Rate */}
               <input
                 name="placementRate"
                 placeholder="Placement Rate (%)"
@@ -535,26 +502,6 @@ export default function MultiStepForm() {
                 onChange={handleChange}
                 title="Overall placement rate."
               />
-
-              {/* Highest Package */}
-              <input
-                name="highestPackage"
-                placeholder="Highest Package (₹ LPA)"
-                value={formData.highestPackage || ""}
-                onChange={handleChange}
-                title="Highest package overall."
-              />
-
-              {/* Average Package */}
-              <input
-                name="avgPackage"
-                placeholder="Average Package (₹ LPA)"
-                value={formData.avgPackage || ""}
-                onChange={handleChange}
-                title="Average package overall."
-              />
-
-              {/* Upload Year-wise Placements */}
               <label>Upload Year-wise Placements Excel (placements.xlsx)</label>
               <input
                 type="file"
@@ -563,8 +510,6 @@ export default function MultiStepForm() {
                 accept=".xlsx"
                 title="Upload Excel with columns: Year, Companies, Placed, Highest CTC, Avg CTC."
               />
-
-              {/* Upload Recruiters Logos */}
               <label>Upload Top Recruiters Logos</label>
               <input
                 type="file"
@@ -572,8 +517,6 @@ export default function MultiStepForm() {
                 multiple
                 onChange={handleFileChange}
               />
-
-              {/* Branch-wise Placements */}
               <h4>Branch-wise Placements</h4>
               <button
                 type="button"
@@ -595,19 +538,19 @@ export default function MultiStepForm() {
                   />
                   <input
                     placeholder="Avg Package (₹ LPA)"
-                    value={branch.avgPackage || ""}
+                    value={branch.avgLPA || ""}
                     onChange={(e) =>
-                      handleBranchChange(index, "avgPackage", e.target.value)
+                      handleBranchChange(index, "avgLPA", e.target.value)
                     }
                     title="Average package for this branch."
                   />
                   <input
                     placeholder="Highest Package (₹ LPA)"
-                    value={branch.highestPackage || ""}
+                    value={branch.highestLPA || ""}
                     onChange={(e) =>
                       handleBranchChange(
                         index,
-                        "highestPackage",
+                        "highestLPA",
                         e.target.value
                       )
                     }
@@ -618,9 +561,9 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 6 && (
+          {step === 4 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 6: Facilities</h3>
+              <h3 className="univ-step-title">Step 4: Facilities & Gallery</h3>
               <p>Select facilities (icons hardcoded in frontend):</p>
               {facilityOptions.map((fac) => (
                 <label key={fac} className="univ-checkbox-label">
@@ -658,12 +601,6 @@ export default function MultiStepForm() {
                   }
                 />
               ))}
-            </div>
-          )}
-
-          {step === 7 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 7: Gallery</h3>
               <label>Upload Infrastructure Photos</label>
               <input
                 type="file"
@@ -691,9 +628,11 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 8 && (
+          {step === 5 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 8: Admissions</h3>
+              <h3 className="univ-step-title">
+                Step 5: Admissions, International, Documents & Account
+              </h3>
               <label>Upload Admissions Excel (admissions.xlsx)</label>
               <input
                 type="file"
@@ -715,14 +654,6 @@ export default function MultiStepForm() {
                 onChange={handleChange}
                 title="List available scholarships."
               />
-            </div>
-          )}
-
-          {step === 9 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">
-                Step 9: International, Docs, Account & Submit
-              </h3>
               <input
                 name="intlStudentOffice"
                 placeholder="Intl. Student Office"
