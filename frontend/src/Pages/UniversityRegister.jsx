@@ -11,7 +11,7 @@ export default function MultiStepForm() {
   const [selectedAccreditations, setSelectedAccreditations] = useState([]);
   const [selectedAffiliations, setSelectedAffiliations] = useState([]);
 
-  const totalSteps = 5;
+  const totalSteps = 3;
 
   const accreditations = [
     "NAAC – National Assessment and Accreditation Council",
@@ -234,32 +234,32 @@ export default function MultiStepForm() {
       });
 
       // -----------------------------
-      // 2. Register university
+      // 2. Register institute
       // -----------------------------
       const baseUrl = "https://acvora-07fo.onrender.com";
 
-      const res = await fetch(`${baseUrl}/api/university-registration`, {
+      const res = await fetch(`${baseUrl}/api/institute-registration`, {
         method: "POST",
         body: payload,
       });
 
       if (!res.ok) {
         console.error("❌ Registration failed:", await res.text());
-        alert("❌ University registration failed!");
+        alert("❌ Institute registration failed!");
         return;
       }
 
       const data = await res.json();
-      console.log("✅ University registered:", data);
+      console.log("✅ Institute registered:", data);
 
       if (!data?.data?._id) {
-        alert("❌ University not created!");
+        alert("❌ Institute not created!");
         return;
       }
 
-      // ✅ store universityId in localStorage and variable
-      const universityId = data.data._id;
-      localStorage.setItem("universityId", universityId);
+      // ✅ store instituteId in localStorage and variable
+      const instituteId = data.data._id;
+      localStorage.setItem("instituteId", instituteId);
 
       // -----------------------------
       // 3. Helper for uploads
@@ -281,7 +281,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.file);
         await uploadFile(
-          `${baseUrl}/api/universities/${universityId}/courses/upload`,
+          `${baseUrl}/api/institutes/${instituteId}/courses/upload`,
           fd,
           "Courses"
         );
@@ -291,7 +291,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.cutoffExcel);
         await uploadFile(
-          `${baseUrl}/api/cutoff/${universityId}/cutoff/upload`,
+          `${baseUrl}/api/cutoff/${instituteId}/cutoff/upload`,
           fd,
           "Cutoff"
         );
@@ -301,7 +301,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.admissionsExcel);
         await uploadFile(
-          `${baseUrl}/api/admissions/${universityId}/admissions/upload`,
+          `${baseUrl}/api/admissions/${instituteId}/admissions/upload`,
           fd,
           "Admissions"
         );
@@ -311,7 +311,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.placementsExcel);
         await uploadFile(
-          `${baseUrl}/api/universities/${universityId}/placements/upload`,
+          `${baseUrl}/api/institutes/${instituteId}/placements/upload`,
           fd,
           "Placements"
         );
@@ -323,7 +323,7 @@ export default function MultiStepForm() {
         files.eventPhotos?.forEach((f) => fd.append("eventPhotos", f));
         files.galleryImages?.forEach((f) => fd.append("galleryImages", f));
         await uploadFile(
-          `${baseUrl}/api/universities/${universityId}/gallery/upload`,
+          `${baseUrl}/api/institutes/${instituteId}/gallery/upload`,
           fd,
           "Gallery"
         );
@@ -333,7 +333,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         files.recruitersLogos.forEach((f) => fd.append("recruitersLogos", f));
         await uploadFile(
-          `${baseUrl}/api/recruiters/${universityId}/recruiters/upload`,
+          `${baseUrl}/api/recruiters/${instituteId}/recruiters/upload`,
           fd,
           "Recruiters logos"
         );
@@ -342,7 +342,7 @@ export default function MultiStepForm() {
       // -----------------------------
       // 5. Success
       // -----------------------------
-      alert("🎉 University Registered Successfully!");
+      alert("🎉 Institute Registered Successfully!");
     } catch (err) {
       console.error("❌ Error submitting form:", err);
       alert("❌ Form submission failed!");
@@ -376,7 +376,7 @@ export default function MultiStepForm() {
       )}
      
       <header className="univ-header">
-        <h1 className="univ-header-title">University Registration</h1>
+        <h1 className="univ-header-title">Institute Registration</h1>
         <p className="univ-header-subtitle">Complete the registration form</p>
       </header>
 
@@ -388,7 +388,7 @@ export default function MultiStepForm() {
           {step === 1 && (
             <div className="univ-form-step grid-3">
               <h3 className="univ-step-title">
-                Step 1: University Basics & Hero/About
+                Step 1: Institute Basics, Hero/About & Contact/Campus Info
               </h3>
               <input
                 name="instituteName"
@@ -521,10 +521,10 @@ export default function MultiStepForm() {
               />
               <textarea
                 name="description"
-                placeholder="About the University (Detailed Description)"
+                placeholder="About the Institute (Detailed Description)"
                 rows={6}
                 onChange={handleChange}
-                title="Provide a detailed description about the university. This will be displayed in the about section."
+                title="Provide a detailed description about the institute. This will be displayed in the about section."
               />
               <label>Upload About Images (at least 5)</label>
               <input
@@ -534,12 +534,6 @@ export default function MultiStepForm() {
                 onChange={handleFileChange}
                 title="Upload at least 5 images for the about section (e.g., campus views)."
               />
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 2: Contact & Campus Info</h3>
               <input
                 name="address"
                 placeholder="Campus Address"
@@ -633,9 +627,9 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 3: Academics & Placements</h3>
+              <h3 className="univ-step-title">Step 2: Academics, Placements & Facilities/Gallery</h3>
               <label>Upload Courses & Fees Excel (courses.xlsx)</label>
               <input
                 type="file"
@@ -721,12 +715,6 @@ export default function MultiStepForm() {
                   />
                 </div>
               ))}
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 4: Facilities & Gallery</h3>
               <p>Select facilities (icons hardcoded in frontend):</p>
               {facilityOptions.map((fac) => (
                 <label key={fac} className="univ-checkbox-label">
@@ -791,10 +779,10 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 5 && (
+          {step === 3 && (
             <div className="univ-form-step grid-3">
               <h3 className="univ-step-title">
-                Step 5: Admissions, International, Documents & Account
+                Step 3: Admissions, International, Documents & Account
               </h3>
               <label>Upload Admissions Excel (admissions.xlsx)</label>
               <input
