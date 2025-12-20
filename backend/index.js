@@ -30,6 +30,11 @@ import savedScholarshipsRoutes from "./routes/savedScholarships.js";
 import counsellingRoutes from "./routes/counselling.js";
 import savedExamsRouter from "./routes/savedExams.js";
 
+// admin scholar routes
+import adminScholarRoutes from "./routes/adminScholarRoutes.js";
+
+
+
 dotenv.config();
 const app = express();
 
@@ -43,11 +48,22 @@ cloudinary.config({
 /* ------------------------ CORS (FIXED) ------------------------ */
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
+
+  // Main Vercel deployments
   "https://acvora-theta.vercel.app",
+  "https://acvora-acvoras-projects.vercel.app",
   "https://acvora-git-main-acvoras-projects.vercel.app",
-  "https://acvora-h45fy0xph-acvoras-projects.vercel.app",
-  "https://acvora-g3qlp8vsi-acvoras-projects.vercel.app"
+
+  // Render backend 
+  "https://acvora-07fo.onrender.com",
+  "https://acvora-5d473m4wf-acvoras-projects.vercel.app",
+  "https://acvora-6w211dktw-acvoras-projects.vercel.app",
+
+  "https://www.acvora-theta.vercel.app",
+  "https://www.acvora-git-main-acvoras-projects.vercel.app",
+  "https://www.acvora-5d473m4wf-acvoras-projects.vercel.app"
 ];
+
 
 
 // ✅ must be above express.json and all routes
@@ -493,6 +509,10 @@ app.use("/api/savedScholarships", savedScholarshipsRoutes);
 app.use("/api/counselling", counsellingRoutes);
 console.log("Mounting savedExams router at /api/savedExams");
 app.use("/api/savedExams", savedExamsRouter);
+
+// mount adminscholar API
+app.use("/api/adminscholar", adminScholarRoutes);
+
 
 /* ------------------------ Health check ------------------------ */
 app.get("/api/health", (req, res) => {

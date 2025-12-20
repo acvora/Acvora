@@ -50,7 +50,8 @@ export default function ExamAlertsNotifications() {
 
   return (
     <div>
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-blue-50 to-purple-50 p-8">
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-8 mt-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -58,10 +59,10 @@ export default function ExamAlertsNotifications() {
           className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-8"
         >
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-extrabold text-blue-700 tracking-wide">
+            <h1 className="text-3xl font-extrabold text-gray-800 tracking-wide">
               Exam Alerts & Notifications
             </h1>
-            <div className="w-50 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-2 rounded-full"></div>
+            <div className="w-50 h-1 bg-gradient-to-r from-slate-600 to-indigo-600 mx-auto mt-2 rounded-full"></div>
           </div>
 
           {/* Upcoming Exams */}
@@ -72,8 +73,8 @@ export default function ExamAlertsNotifications() {
             className="mb-10"
           >
             <div className="flex items-center gap-3 mb-4">
-              <Calendar className="text-blue-600 w-7 h-7" />
-              <h2 className="text-xl font-semibold text-gray-800 border-b-2 border-blue-400 inline-block">
+              <Calendar className="text-slate-600 w-7 h-7" />
+              <h2 className="text-xl font-semibold text-gray-800 border-b-2 border-slate-400 inline-block">
                 Upcoming Exams
               </h2>
             </div>
@@ -85,7 +86,7 @@ export default function ExamAlertsNotifications() {
               value={formData.examName}
               onChange={handleChange}
               placeholder="Enter exam name"
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-slate-400 focus:border-transparent transition"
             />
 
             <label className="block mb-2 font-medium text-gray-700">Exam Date</label>
@@ -94,7 +95,7 @@ export default function ExamAlertsNotifications() {
               name="examDate"
               value={formData.examDate}
               onChange={handleChange}
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-slate-400 focus:border-transparent transition"
             />
 
             <label className="block mb-2 font-medium text-gray-700">Syllabus Link</label>
@@ -104,7 +105,7 @@ export default function ExamAlertsNotifications() {
               value={formData.syllabusLink}
               onChange={handleChange}
               placeholder="Enter syllabus URL"
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-slate-400 focus:border-transparent transition"
             />
 
             <label className="block mb-2 font-medium text-gray-700">Application Deadline</label>
@@ -113,7 +114,7 @@ export default function ExamAlertsNotifications() {
               name="applicationDeadline"
               value={formData.applicationDeadline}
               onChange={handleChange}
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-400"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-slate-400 focus:border-transparent transition"
             />
           </motion.div>
 
@@ -125,8 +126,8 @@ export default function ExamAlertsNotifications() {
             className="mb-10"
           >
             <div className="flex items-center gap-3 mb-4">
-              <FileSearch className="text-green-600 w-7 h-7" />
-              <h2 className="text-xl font-semibold text-gray-800 border-b-2 border-green-400 inline-block">
+              <FileSearch className="text-emerald-600 w-7 h-7" />
+              <h2 className="text-xl font-semibold text-gray-800 border-b-2 border-emerald-400 inline-block">
                 Result Announcements
               </h2>
             </div>
@@ -138,7 +139,7 @@ export default function ExamAlertsNotifications() {
               value={formData.resultExamName}
               onChange={handleChange}
               placeholder="Enter exam name"
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-green-400"
+              className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition"
             />
 
             <label className="block mb-2 font-medium text-gray-700">Result Date</label>
@@ -147,7 +148,7 @@ export default function ExamAlertsNotifications() {
               name="resultDate"
               value={formData.resultDate}
               onChange={handleChange}
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-green-400"
+              className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition"
             />
 
             <label className="block mb-2 font-medium text-gray-700">Result Link</label>
@@ -157,7 +158,7 @@ export default function ExamAlertsNotifications() {
               value={formData.resultLink}
               onChange={handleChange}
               placeholder="Enter result URL"
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-400"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition"
             />
           </motion.div>
 
@@ -180,7 +181,7 @@ export default function ExamAlertsNotifications() {
               name="notificationType"
               value={formData.notificationType}
               onChange={handleChange}
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-purple-400"
+              className="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition"
             >
               <option value="">-- Select --</option>
               <option>New Message</option>
@@ -195,7 +196,7 @@ export default function ExamAlertsNotifications() {
               onChange={handleChange}
               placeholder="Enter notification message"
               rows="3"
-              className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-purple-400"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-purple-400 focus:border-transparent transition resize-none"
             />
           </motion.div>
 
@@ -203,7 +204,7 @@ export default function ExamAlertsNotifications() {
           <div className="flex justify-end">
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-gradient-to-r from-pink-500 to-blue-600 text-white rounded-lg shadow-md hover:shadow-lg transition"
+              className="px-8 py-3 bg-gradient-to-r from-slate-600 to-indigo-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 hover:from-slate-700 hover:to-indigo-700"
             >
               Save / Submit
             </button>

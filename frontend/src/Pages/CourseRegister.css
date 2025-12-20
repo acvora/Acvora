@@ -1,63 +1,83 @@
+/* src/Pages/CourseRegister.css */
+
+/* Container for the entire form */
 .course-register-container {
   min-height: 100vh;
+  background: linear-gradient(135deg, #e8e8e8 0%, #ffffff 50%, #fefce8 100%);
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  background: linear-gradient(to bottom, #A5B4FC, #C4B5FD, #F5D0FE);
-  padding: 2rem;
+  padding: 3rem 1rem;
 }
 
+/* Main card */
 .course-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #C7D2FE;
-  border-radius: 1rem;
-  padding: 2rem;
   width: 100%;
   max-width: 800px;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 2rem;
 }
 
+/* Header styles */
 .course-title {
   font-size: 1.5rem;
-  font-weight: 700;
-  color: #0F172A;
+  font-weight: bold;
+  color: #111827;
   margin-bottom: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Form styles */
 .course-form {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
 }
 
+/* Form group */
 .form-group {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
+/* Labels */
 .form-group label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  letter-spacing: 0.025em;
 }
 
+/* Inputs and selects */
 .form-group input,
 .form-group textarea {
-  border: 1px solid #C7D2FE;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  font-size: 0.9rem;
-  background: #fff;
-  outline: none;
-  transition: border 0.2s;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 1rem;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+  color: #111827;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: #4F46E5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #111827;
+  transform: translateY(-1px);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #9ca3af;
 }
 
 .form-group textarea {
@@ -65,20 +85,41 @@
   min-height: 100px;
 }
 
+/* Submit button */
 .course-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #111827;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(17, 24, 39, 0.4);
   border: none;
-  border-radius: 0.5rem;
-  background: linear-gradient(to right, #4F46E5, #7C3AED);
-  padding: 0.75rem;
-  font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
+  margin-top: 1rem;
 }
 
-.course-submit:hover {
-  background: linear-gradient(to right, #4338CA, #6D28D9);
+.course-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(17, 24, 39, 0.5);
+  background: #0f1117;
+}
+
+.course-submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #111827, 0 0 0 4px rgba(17, 24, 39, 0.2);
+}
+
+.course-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* Additional styles for dynamic sections */
@@ -89,9 +130,9 @@
   gap: 0.5rem;
   margin-bottom: 1rem;
   padding: 1rem;
-  border: 1px solid #C7D2FE;
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .spec-controls {
@@ -104,33 +145,59 @@
 .institute-preview {
   max-width: 150px;
   max-height: 90px;
-  border-radius: 0.25rem;
+  border-radius: 8px;
 }
 
 .spec-add,
 .spec-remove {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  font-family: inherit;
 }
 
 .spec-add {
-  background: #4F46E5;
+  background: #111827;
   color: white;
 }
 
 .spec-add:hover {
-  background: #4338CA;
+  background: #0f1117;
+  transform: translateY(-1px);
 }
 
 .spec-remove {
-  background: #EF4444;
+  background: #ef4444;
   color: white;
 }
 
 .spec-remove:hover {
-  background: #DC2626;
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .course-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .course-title {
+    font-size: 1.25rem;
+  }
+
+  .course-form {
+    gap: 1rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+  }
 }

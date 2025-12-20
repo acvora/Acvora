@@ -162,13 +162,13 @@ const Navbar = () => {
       }`}
     >
       <div className="flex items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <div className="flex items-center space-x-3">
+        {/* Logo - Wrapped in NavLink for navigation to home */}
+        <NavLink to="/" className="flex items-center space-x-3">
           <img src="/acvora2.png" alt="Vision Logo" className="h-10 w-auto" />
           <span className="text-2xl font-extrabold text-yellow-500 tracking-wide">
             Acvora
           </span>
-        </div>
+        </NavLink>
 
         {/* Desktop Nav Links */}
         <div className="hidden md:flex flex-1 justify-center">

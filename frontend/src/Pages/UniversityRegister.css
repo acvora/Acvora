@@ -2,73 +2,66 @@
 .univ-app-container {
   max-width: 100%;
   margin: 0 auto;
-  font-family: 'Arial', sans-serif;
-  background-color: #ffff; /* Light background */
-  padding: 0 1rem; /* Add base padding for small screens */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 0 1rem;
+  margin-top: 80px; /* Added to shift content below the navbar */
 }
 
 /* Header styling */
 .univ-header {
   text-align: center;
-  margin-bottom: 30px;
-  background-color: #1a202c;
-  width: auto;
-  text-align: center;
-  padding: 1rem 0;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.univ-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ecc94b, #f6ad55, #ecc94b);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .univ-header-title {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
-  padding-top: 1rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
   color: #ecc94b;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .univ-header-subtitle {
-  font-size: clamp(1rem, 3vw, 1.2rem);
-  color: #ecc94b;
-  padding: 1rem 2rem;
-}
-
-/* Stepper styling */
-.univ-stepper {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 30px;
-  flex-wrap: wrap; /* Allow wrapping on very small screens */
-}
-
-.univ-stepper-circle {
-  width: clamp(30px, 6vw, 40px);
-  height: clamp(30px, 6vw, 40px);
-  border-radius: 50%;
-  background-color: #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  font-size: clamp(0.8rem, 2vw, 1rem);
-}
-
-.univ-stepper-circle.active {
-  background-color: #007bff;
-  color: #fff !important;
-}
-
-.univ-stepper-circle.completed {
-  background-color: #28a745;
-  color: #fff !important;
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: #e2e8f0;
+  margin: 0.5rem 0 0;
+  font-weight: 400;
 }
 
 /* Main form container */
 .univ-main-container {
-  background-color: #e8e8e8;
-  padding: clamp(1rem, 3vw, 20px);
-  border-radius: 8px;
-  max-width: 1500px;
-  margin: 0 auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 20px;
+  max-width: 1400px;
+  margin: 0 auto 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Form styling */
@@ -76,21 +69,24 @@
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.5rem;
 }
 
 /* Grid layout for form steps */
 .univ-form-step.grid-3 {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: clamp(10px, 2vw, 20px);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(1rem, 2.5vw, 1.5rem);
 }
 
 .univ-form-step h3 {
   grid-column: 1 / -1;
-  font-size: clamp(1.2rem, 3vw, 1.8rem);
-  margin-bottom: 10px;
-  color: #1a202c;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin-bottom: 1rem;
+  color: #2d3748;
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e2e8f0;
 }
 
 /* Input, select, and textarea styling */
@@ -98,14 +94,15 @@
 .univ-form-step select,
 .univ-form-step textarea {
   width: 100%;
-  padding: clamp(0.5rem, 1.5vw, 10px);
-  border: 1px solid #1a202c;
-  border-radius: 4px;
-  font-size: clamp(0.9rem, 2vw, 1rem);
-  background-color: #fff;
-  color: #000 !important;
-  transition: border-color 0.3s ease;
-  box-sizing: border-box; /* Ensure padding doesn't overflow */
+  padding: clamp(0.75rem, 2vw, 1rem) 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  background: linear-gradient(135deg, #fff 0%, #f7fafc 100%);
+  color: #2d3748 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .univ-form-step input:focus,
@@ -113,95 +110,145 @@
 .univ-form-step textarea:focus {
   outline: none;
   border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+  background: #fff;
 }
 
 /* Tooltip for input descriptions */
+.univ-form-step input[title],
+.univ-form-step select[title],
+.univ-form-step textarea[title] {
+  position: relative;
+}
+
 .univ-form-step input[title]:hover::after,
 .univ-form-step select[title]:hover::after,
 .univ-form-step textarea[title]:hover::after {
   content: attr(title);
   position: absolute;
-  top: -100%;
+  bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #333;
+  background: linear-gradient(135deg, #333 0%, #555 100%);
   color: #fff !important;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  white-space: nowrap;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  white-space: normal;
+  max-width: 250px;
   z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 0.5rem;
 }
 
 /* File input styling */
 .univ-form-step input[type="file"] {
-  padding: 5px;
-  border: none;
-  background-color: transparent;
+  padding: 0.75rem;
+  border: 2px dashed #e2e8f0;
+  background: #f7fafc;
+  transition: all 0.3s ease;
+}
+
+.univ-form-step input[type="file"]:hover {
+  border-color: #007bff;
+  background: #eff6ff;
 }
 
 /* Labels */
 .univ-form-step label {
-  font-size: clamp(0.9rem, 2vw, 1rem);
-  margin-bottom: 5px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  margin-bottom: 0.5rem;
   display: block;
+  font-weight: 500;
+  color: #4a5568;
 }
 
 /* Checkbox styling */
 .univ-checkbox-label {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  gap: 0.75rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  padding: 0.75rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.univ-checkbox-label:hover {
+  background: #f7fafc;
+}
+
+.univ-checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
 }
 
 /* Branch group styling */
 .branch-group {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px;
-  margin-bottom: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #f7fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
 /* Buttons */
 .univ-nav-btn,
 .univ-submit-btn,
 .univ-add-btn {
-  padding: clamp(0.5rem, 1.5vw, 10px) clamp(1rem, 3vw, 20px);
+  padding: clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2rem);
   border: none;
-  border-radius: 4px;
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  border-radius: 12px;
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  min-width: 100px; /* Prevent buttons from shrinking too much */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .univ-nav-btn {
-  background-color: #1a202c;
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
   color: #ecc94b;
 }
 
 .univ-nav-btn:hover {
-  background-color: #ecc94b;
+  background: linear-gradient(135deg, #ecc94b 0%, #f6ad55 100%);
   color: #1a202c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(236, 201, 75, 0.3);
 }
 
 .univ-submit-btn {
-  background-color: #28a745;
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  color: #fff;
+  grid-column: 1 / -1;
+  font-size: 1.125rem;
 }
 
 .univ-submit-btn:hover {
-  background-color: #218838;
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
 }
 
 .univ-add-btn {
-  background-color: #28a745;
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+  color: #fff;
   grid-column: 1 / -1;
 }
 
 .univ-add-btn:hover {
-  background-color: #218838;
+  background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
 }
 
 /* Form navigation */
@@ -209,33 +256,34 @@
   grid-column: 1 / -1;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
-  gap: 10px;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 /* Loader overlay */
 .loader-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
   color: white;
-  font-size: 18px;
+  font-size: 1.125rem;
+  backdrop-filter: blur(5px);
 }
 
 .loader {
-  border: 6px solid #ddd;
-  border-top: 6px solid #3498db;
+  border: 4px solid rgba(255,255,255,0.3);
+  border-top: 4px solid #007bff;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 0.9s linear infinite;
-  margin-bottom: 12px;
+  width: 50px;
+  height: 50px;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
 }
 
 @keyframes spin {
@@ -247,19 +295,16 @@
 @media (max-width: 480px) {
   .univ-app-container {
     padding: 0 0.5rem;
+    margin-top: 70px; /* Adjusted for smaller screens */
   }
 
-  .univ-header-subtitle {
-    padding: 1rem;
-  }
-
-  .univ-stepper {
-    gap: 5px;
+  .univ-header {
+    padding: 1.5rem 1rem;
   }
 
   .univ-form-step.grid-3 {
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 1rem;
   }
 
   .branch-group {
@@ -275,27 +320,22 @@
   .univ-submit-btn,
   .univ-add-btn {
     width: 100%;
-    justify-content: center;
   }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
   .univ-form-step.grid-3 {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 
   .branch-group {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .univ-stepper {
-    gap: 8px;
-  }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
   .univ-form-step.grid-3 {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
   .branch-group {
@@ -309,6 +349,6 @@
   }
 
   .univ-main-container {
-    padding: 2rem;
+    padding: 3rem;
   }
 }

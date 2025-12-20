@@ -8,14 +8,89 @@ export default function MultiStepForm() {
   const [selectedFacilities, setSelectedFacilities] = useState([]);
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedAccreditations, setSelectedAccreditations] = useState([]);
+  const [selectedAffiliations, setSelectedAffiliations] = useState([]);
 
-  const totalSteps = 9;
+  const totalSteps = 3;
+
+  const accreditations = [
+    "NAAC – National Assessment and Accreditation Council",
+    "NBA – National Board of Accreditation",
+    "NIRF Ranking",
+    "AISHE Code (All India Survey on Higher Education)",
+    "AICTE Approval – All India Council for Technical Education",
+    "PCI – Pharmacy Council of India",
+    "MCI / NMC – National Medical Commission (formerly Medical Council of India)",
+    "BCI – Bar Council of India",
+    "INC – Indian Nursing Council",
+    "DCI – Dental Council of India",
+    "COA – Council of Architecture",
+    "RCI – Rehabilitation Council of India",
+    "NCVT – National Council for Vocational Training",
+    "SCVT – State Council for Vocational Training",
+    "NABH – National Accreditation Board for Hospitals & Healthcare Providers",
+    "NCTE – National Council for Teacher Education",
+    "NABET – National Accreditation Board for Education & Training",
+    "ICAR – Indian Council of Agricultural Research",
+    "IAP – Indian Association of Physiotherapists",
+    "VCC – Veterinary Council of India (VCI)",
+    "IGNOU Recognition (Distance Education)",
+    "DEB – Distance Education Bureau (UGC)",
+    "AACSB – Association to Advance Collegiate Schools of Business",
+    "AMBA – Association of MBAs",
+    "EQUIS – EFMD Quality Improvement System",
+    "ACBSP – Accreditation Council for Business Schools and Programs",
+    "ABET – Accreditation Board for Engineering & Technology",
+    "WES / IQAS Recognized",
+    "QAA – UK Quality Assurance Agency",
+    "TESQA – Australia",
+    "EduTrust Singapore"
+  ];
+
+  const affiliations = [
+    "UGC – University Grants Commission",
+    "UGC – Deemed to be University Status",
+    "MoE – Ministry of Education India",
+    "AIU – Association of Indian Universities Membership",
+    "IHM / NCHMCT Affiliation (Hotel Management)",
+    "State Teacher Education University Affiliation",
+    "RGUHS – Rajiv Gandhi University of Health Sciences (Karnataka)",
+    "MUHS – Maharashtra University of Health Sciences",
+    "BABA FARID University of Health Sciences (Punjab)",
+    "NSDC – National Skill Development Corporation",
+    "TN Dr. MGR Medical University",
+    "VTU – Visvesvaraya Technological University",
+    "Maulana Abul Kalam Azad University of Technology – West Bengal",
+    "Mumbai University",
+    "Delhi University (DU)",
+    "Pune University (SPPU)",
+    "Anna University",
+    "Osmania University",
+    "JNTU",
+    "AKTU – Dr. A.P.J. Abdul Kalam Technical University",
+    "Rashtrasant Tukadoji Maharaj Nagpur University – Nagpur University",
+    "Madurai Kamaraj University",
+    "IGNOU Affiliated Centre",
+    "Institute of National Importance",
+    "Institute of National Importance - IIT",
+    "Institute of National Importance - NIT",
+    "Institute of National Importance - IIIT",
+    "Institute of National Importance - IIM",
+    "Institute of National Importance - AIIMS",
+    "Skill India / PMKVY Training Partner"
+  ];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let newValue;
+    if (type === "checkbox") {
+      newValue = checked;
+    } else {
+      newValue = value;
+    }
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: newValue,
     });
   };
 
@@ -41,6 +116,30 @@ export default function MultiStepForm() {
         [name]: Array.from(uploadedFiles), // Multiple files
       });
     }
+  };
+
+  const addAccreditation = (value) => {
+    if (value && !selectedAccreditations.includes(value)) {
+      setSelectedAccreditations([...selectedAccreditations, value]);
+    }
+  };
+
+  const removeAccreditation = (index) => {
+    const newList = [...selectedAccreditations];
+    newList.splice(index, 1);
+    setSelectedAccreditations(newList);
+  };
+
+  const addAffiliation = (value) => {
+    if (value && !selectedAffiliations.includes(value)) {
+      setSelectedAffiliations([...selectedAffiliations, value]);
+    }
+  };
+
+  const removeAffiliation = (index) => {
+    const newList = [...selectedAffiliations];
+    newList.splice(index, 1);
+    setSelectedAffiliations(newList);
   };
 
   const handleFacilityChange = (e) => {
@@ -79,8 +178,6 @@ export default function MultiStepForm() {
         alert("Please upload at least 3 banner images.");
         return;
       }
-    }
-    if (step === 2) {
       if (!files.aboutImages || files.aboutImages.length < 5) {
         alert("Please upload at least 5 about images.");
         return;
@@ -118,6 +215,14 @@ export default function MultiStepForm() {
         payload.append("branches", JSON.stringify(branches));
       }
 
+      // Accreditations and Affiliations
+      if (selectedAccreditations.length > 0) {
+        payload.append("accreditations", JSON.stringify(selectedAccreditations));
+      }
+      if (selectedAffiliations.length > 0) {
+        payload.append("affiliations", JSON.stringify(selectedAffiliations));
+      }
+
       // File fields
       Object.entries(files).forEach(([key, fileList]) => {
         if (!fileList) return;
@@ -129,32 +234,32 @@ export default function MultiStepForm() {
       });
 
       // -----------------------------
-      // 2. Register university
+      // 2. Register institute
       // -----------------------------
       const baseUrl = "https://acvora-07fo.onrender.com";
 
-      const res = await fetch(`${baseUrl}/api/university-registration`, {
+      const res = await fetch(`${baseUrl}/api/institute-registration`, {
         method: "POST",
         body: payload,
       });
 
       if (!res.ok) {
         console.error("❌ Registration failed:", await res.text());
-        alert("❌ University registration failed!");
+        alert("❌ Institute registration failed!");
         return;
       }
 
       const data = await res.json();
-      console.log("✅ University registered:", data);
+      console.log("✅ Institute registered:", data);
 
       if (!data?.data?._id) {
-        alert("❌ University not created!");
+        alert("❌ Institute not created!");
         return;
       }
 
-      // ✅ store universityId in localStorage and variable
-      const universityId = data.data._id;
-      localStorage.setItem("universityId", universityId);
+      // ✅ store instituteId in localStorage and variable
+      const instituteId = data.data._id;
+      localStorage.setItem("instituteId", instituteId);
 
       // -----------------------------
       // 3. Helper for uploads
@@ -176,7 +281,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.file);
         await uploadFile(
-          `${baseUrl}/api/universities/${universityId}/courses/upload`,
+          `${baseUrl}/api/institutes/${instituteId}/courses/upload`,
           fd,
           "Courses"
         );
@@ -186,7 +291,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.cutoffExcel);
         await uploadFile(
-          `${baseUrl}/api/cutoff/${universityId}/cutoff/upload`,
+          `${baseUrl}/api/cutoff/${instituteId}/cutoff/upload`,
           fd,
           "Cutoff"
         );
@@ -196,7 +301,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.admissionsExcel);
         await uploadFile(
-          `${baseUrl}/api/admissions/${universityId}/admissions/upload`,
+          `${baseUrl}/api/admissions/${instituteId}/admissions/upload`,
           fd,
           "Admissions"
         );
@@ -206,7 +311,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.placementsExcel);
         await uploadFile(
-          `${baseUrl}/api/universities/${universityId}/placements/upload`,
+          `${baseUrl}/api/institutes/${instituteId}/placements/upload`,
           fd,
           "Placements"
         );
@@ -218,7 +323,7 @@ export default function MultiStepForm() {
         files.eventPhotos?.forEach((f) => fd.append("eventPhotos", f));
         files.galleryImages?.forEach((f) => fd.append("galleryImages", f));
         await uploadFile(
-          `${baseUrl}/api/universities/${universityId}/gallery/upload`,
+          `${baseUrl}/api/institutes/${instituteId}/gallery/upload`,
           fd,
           "Gallery"
         );
@@ -228,7 +333,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         files.recruitersLogos.forEach((f) => fd.append("recruitersLogos", f));
         await uploadFile(
-          `${baseUrl}/api/recruiters/${universityId}/recruiters/upload`,
+          `${baseUrl}/api/recruiters/${instituteId}/recruiters/upload`,
           fd,
           "Recruiters logos"
         );
@@ -237,7 +342,7 @@ export default function MultiStepForm() {
       // -----------------------------
       // 5. Success
       // -----------------------------
-      alert("🎉 University Registered Successfully!");
+      alert("🎉 Institute Registered Successfully!");
     } catch (err) {
       console.error("❌ Error submitting form:", err);
       alert("❌ Form submission failed!");
@@ -271,22 +376,9 @@ export default function MultiStepForm() {
       )}
      
       <header className="univ-header">
-        <h1 className="univ-header-title">University Registration</h1>
-        <p className="univ-header-subtitle">Complete all 9 steps below</p>
+        <h1 className="univ-header-title">Institute Registration</h1>
+        <p className="univ-header-subtitle">Complete the registration form</p>
       </header>
-
-      <div className="univ-stepper">
-        {[...Array(totalSteps)].map((_, i) => (
-          <div
-            key={i}
-            className={`univ-stepper-circle ${step === i + 1 ? "active" : ""} ${
-              step > i + 1 ? "completed" : ""
-            }`}
-          >
-            {i + 1}
-          </div>
-        ))}
-      </div>
 
       <main className="univ-main-container">
         <form
@@ -296,7 +388,7 @@ export default function MultiStepForm() {
           {step === 1 && (
             <div className="univ-form-step grid-3">
               <h3 className="univ-step-title">
-                Step 1: Basic Info + Hero Section
+                Step 1: Institute Basics, Hero/About & Contact/Campus Info
               </h3>
               <input
                 name="instituteName"
@@ -331,18 +423,74 @@ export default function MultiStepForm() {
                 <option>Deemed</option>
                 <option>Autonomous</option>
               </select>
-              <input
-                name="accreditation"
-                placeholder="Accreditation (e.g., NAAC A+)"
-                onChange={handleChange}
-                title="Accreditation details like NAAC grade. Hero section."
-              />
-              <input
-                name="affiliation"
-                placeholder="Affiliation (e.g., UGC, AICTE)"
-                onChange={handleChange}
-                title="Affiliations and approvals. Shown in hero."
-              />
+              <div className="acc-aff-row">
+                <div className="accreditation-section">
+                  <label>Accreditations</label>
+                  <div className="selected-tags">
+                    {selectedAccreditations.map((acc, index) => (
+                      <span key={index} className="tag">
+                        {acc}
+                        <button
+                          type="button"
+                          onClick={() => removeAccreditation(index)}
+                          className="remove-tag"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        addAccreditation(e.target.value);
+                        e.target.value = "";
+                      }
+                    }}
+                    defaultValue=""
+                  >
+                    <option value="">Select from list</option>
+                    {accreditations.map((acc) => (
+                      <option key={acc} value={acc}>
+                        {acc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="affiliation-section">
+                  <label>Affiliations</label>
+                  <div className="selected-tags">
+                    {selectedAffiliations.map((aff, index) => (
+                      <span key={index} className="tag">
+                        {aff}
+                        <button
+                          type="button"
+                          onClick={() => removeAffiliation(index)}
+                          className="remove-tag"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        addAffiliation(e.target.value);
+                        e.target.value = "";
+                      }
+                    }}
+                    defaultValue=""
+                  >
+                    <option value="">Select from list</option>
+                    {affiliations.map((aff) => (
+                      <option key={aff} value={aff}>
+                        {aff}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
               <input
                 name="students"
                 placeholder="No. of Students (e.g., 78234)"
@@ -371,18 +519,12 @@ export default function MultiStepForm() {
                 accept="image/*"
                 onChange={handleFileChange}
               />
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 2: About Section</h3>
               <textarea
                 name="description"
-                placeholder="About the University (Detailed Description)"
+                placeholder="About the Institute (Detailed Description)"
                 rows={6}
                 onChange={handleChange}
-                title="Provide a detailed description about the university. This will be displayed in the about section."
+                title="Provide a detailed description about the institute. This will be displayed in the about section."
               />
               <label>Upload About Images (at least 5)</label>
               <input
@@ -392,14 +534,6 @@ export default function MultiStepForm() {
                 onChange={handleFileChange}
                 title="Upload at least 5 images for the about section (e.g., campus views)."
               />
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">
-                Step 3: Contact & Info Section
-              </h3>
               <input
                 name="address"
                 placeholder="Campus Address"
@@ -493,11 +627,9 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 4 && (
+          {step === 2 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">
-                Step 4: Courses, Fees & Cutoffs
-              </h3>
+              <h3 className="univ-step-title">Step 2: Academics, Placements & Facilities/Gallery</h3>
               <label>Upload Courses & Fees Excel (courses.xlsx)</label>
               <input
                 type="file"
@@ -520,14 +652,6 @@ export default function MultiStepForm() {
                 onChange={handleChange}
                 title="List popular courses for info section."
               />
-            </div>
-          )}
-
-          {step === 5 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 5: Placements</h3>
-
-              {/* Placement Rate */}
               <input
                 name="placementRate"
                 placeholder="Placement Rate (%)"
@@ -535,26 +659,6 @@ export default function MultiStepForm() {
                 onChange={handleChange}
                 title="Overall placement rate."
               />
-
-              {/* Highest Package */}
-              <input
-                name="highestPackage"
-                placeholder="Highest Package (₹ LPA)"
-                value={formData.highestPackage || ""}
-                onChange={handleChange}
-                title="Highest package overall."
-              />
-
-              {/* Average Package */}
-              <input
-                name="avgPackage"
-                placeholder="Average Package (₹ LPA)"
-                value={formData.avgPackage || ""}
-                onChange={handleChange}
-                title="Average package overall."
-              />
-
-              {/* Upload Year-wise Placements */}
               <label>Upload Year-wise Placements Excel (placements.xlsx)</label>
               <input
                 type="file"
@@ -563,8 +667,6 @@ export default function MultiStepForm() {
                 accept=".xlsx"
                 title="Upload Excel with columns: Year, Companies, Placed, Highest CTC, Avg CTC."
               />
-
-              {/* Upload Recruiters Logos */}
               <label>Upload Top Recruiters Logos</label>
               <input
                 type="file"
@@ -572,8 +674,6 @@ export default function MultiStepForm() {
                 multiple
                 onChange={handleFileChange}
               />
-
-              {/* Branch-wise Placements */}
               <h4>Branch-wise Placements</h4>
               <button
                 type="button"
@@ -595,19 +695,19 @@ export default function MultiStepForm() {
                   />
                   <input
                     placeholder="Avg Package (₹ LPA)"
-                    value={branch.avgPackage || ""}
+                    value={branch.avgLPA || ""}
                     onChange={(e) =>
-                      handleBranchChange(index, "avgPackage", e.target.value)
+                      handleBranchChange(index, "avgLPA", e.target.value)
                     }
                     title="Average package for this branch."
                   />
                   <input
                     placeholder="Highest Package (₹ LPA)"
-                    value={branch.highestPackage || ""}
+                    value={branch.highestLPA || ""}
                     onChange={(e) =>
                       handleBranchChange(
                         index,
-                        "highestPackage",
+                        "highestLPA",
                         e.target.value
                       )
                     }
@@ -615,12 +715,6 @@ export default function MultiStepForm() {
                   />
                 </div>
               ))}
-            </div>
-          )}
-
-          {step === 6 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 6: Facilities</h3>
               <p>Select facilities (icons hardcoded in frontend):</p>
               {facilityOptions.map((fac) => (
                 <label key={fac} className="univ-checkbox-label">
@@ -658,12 +752,6 @@ export default function MultiStepForm() {
                   }
                 />
               ))}
-            </div>
-          )}
-
-          {step === 7 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 7: Gallery</h3>
               <label>Upload Infrastructure Photos</label>
               <input
                 type="file"
@@ -691,9 +779,11 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 8 && (
+          {step === 3 && (
             <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">Step 8: Admissions</h3>
+              <h3 className="univ-step-title">
+                Step 3: Admissions, International, Documents & Account
+              </h3>
               <label>Upload Admissions Excel (admissions.xlsx)</label>
               <input
                 type="file"
@@ -715,14 +805,6 @@ export default function MultiStepForm() {
                 onChange={handleChange}
                 title="List available scholarships."
               />
-            </div>
-          )}
-
-          {step === 9 && (
-            <div className="univ-form-step grid-3">
-              <h3 className="univ-step-title">
-                Step 9: International, Docs, Account & Submit
-              </h3>
               <input
                 name="intlStudentOffice"
                 placeholder="Intl. Student Office"
@@ -834,6 +916,39 @@ export default function MultiStepForm() {
           </div>
         </form>
       </main>
+
+      <style jsx>{`
+        .acc-aff-row {
+          grid-column: span 3;
+          display: flex;
+          gap: 1rem;
+        }
+        .accreditation-section,
+        .affiliation-section {
+          flex: 1;
+        }
+        .selected-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .tag {
+          background: #e0e0e0;
+          padding: 0.25rem 0.5rem;
+          border-radius: 0.25rem;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+        .remove-tag {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 1.2rem;
+          color: #666;
+        }
+      `}</style>
     </div>
   );
 }
