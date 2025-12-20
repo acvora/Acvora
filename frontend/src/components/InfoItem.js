@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const InfoItem = ({ item }) => {
   return (
+    <Link to= {item.link}>
     <div className="bg-white shadow-md rounded-xl p-6 hover:shadow-lg transition duration-300">
 
       {/* ICON DISPLAY */}
@@ -23,6 +24,7 @@ const InfoItem = ({ item }) => {
       </p>
 
     </div>
+    </Link>
   );
 };
 
