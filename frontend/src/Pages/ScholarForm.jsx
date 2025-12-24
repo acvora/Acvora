@@ -91,7 +91,7 @@ export default function ScholarForm() {
     disbursementFrequency: "",
 
     // 12. Application Status Control
-    status: "",
+    status: "Draft",
     visibility: "",
     featured: "",
 
@@ -150,20 +150,37 @@ export default function ScholarForm() {
     try {
       const token = localStorage.getItem("token");
 
-      // Auto-generate code if empty (simple example)
       const payload = {
         ...formData,
         code: formData.code || `SCH-${Date.now()}`,
-        // Flatten multi-selects if needed for backend
-        tags: [
-          ...(formData.categoryEligibility || []),
-          ...(formData.type || []),
-          formData.level,
-          formData.searchKeywords.split(',').map(t => t.trim()).filter(Boolean),
-          formData.courseTags.split(',').map(t => t.trim()).filter(Boolean),
-          formData.locationTags.split(',').map(t => t.trim()).filter(Boolean),
-        ].filter(Boolean),
       };
+
+      // ❌ REMOVE EMPTY ARRAYS (CRITICAL FIX)
+      Object.keys(payload).forEach((key) => {
+        if (Array.isArray(payload[key]) && payload[key].length === 0) {
+          delete payload[key];
+        }
+      });
+
+      // ✅ BUILD TAGS SAFELY
+      payload.tags = [
+        ...(formData.categoryEligibility || []),
+        ...(formData.type || []),
+        formData.level,
+        ...formData.searchKeywords.split(",").map(t => t.trim()).filter(Boolean),
+        ...formData.courseTags.split(",").map(t => t.trim()).filter(Boolean),
+        ...formData.locationTags.split(",").map(t => t.trim()).filter(Boolean),
+      ];
+
+      // ✅ CHANGE 3 — EXTRA SAFETY FOR TYPE (OPTIONAL BUT RECOMMENDED)
+      if (payload.type && !Array.isArray(payload.type)) {
+        payload.type = [payload.type];
+      }
+
+      // 🔐 EXTRA SAFETY (OPTIONAL BUT STRONG)
+      if (!payload.status) {
+        payload.status = "Draft";
+      }
 
       // POST to backend
       const res = await axios.post(`${API_URL}/adminscholar`, payload, {
@@ -227,7 +244,7 @@ export default function ScholarForm() {
         interviewMode: "",
         disbursementMode: "",
         disbursementFrequency: "",
-        status: "",
+        status: "Draft",
         visibility: "",
         featured: "",
         searchKeywords: "",
@@ -631,9 +648,15 @@ export default function ScholarForm() {
             <>
               <div className="form-field">
                 <label className="field-label">Scholarship Status <span className="required">*</span></label>
-                <select name="status" value={formData.status} onChange={handleChange} required className="field-select">
-                  <option value="">Select Status</option>
-                  {statuses.map((s, i) => <option key={i} value={s}>{s}</option>)}
+                <select
+                  name="status"
+                  value={formData.status || "Draft"}
+                  onChange={handleChange}
+                  className="field-select"
+                >
+                  {statuses.map((s, i) => (
+                    <option key={i} value={s}>{s}</option>
+                  ))}
                 </select>
               </div>
               <div className="form-field">
