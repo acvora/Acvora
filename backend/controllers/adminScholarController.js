@@ -2,73 +2,76 @@
 import AdminScholar from "../models/AdminScholar.js";
 
 /**
- * CREATE SCHOLARSHIP
+ * Create a new admin scholar (scholarship)
  */
-export const createScholar = async (req, res) => {
+export const createScholar = async (req, res, next) => {
   try {
-    const data = req.body;
+    const data = req.body || {};
 
-    if (!data.name || !data.provider || !data.status) {
-      return res.status(400).json({
-        success: false,
-        error: "Name, Provider and Status are required",
-      });
+    // Basic server-side validation
+    if (!data.name || !data.name.toString().trim()) {
+      return res.status(400).json({ success: false, error: "Name is required" });
+    }
+    if (!data.provider || !data.provider.toString().trim()) {
+      return res.status(400).json({ success: false, error: "Provider is required" });
     }
 
-    // Auto-generate tags if not sent
-    let tags = data.tags || [];
+    // Build tags (if not provided)
+    let tags = Array.isArray(data.tags) ? data.tags.map(String).filter(Boolean) : [];
     if (!tags.length) {
-      if (data.educationLevel) tags.push(data.educationLevel);
-      if (data.categoryEligibility?.length) tags.push(...data.categoryEligibility);
-      if (data.discipline?.length) tags.push(...data.discipline);
+      if (data.category) tags.push(String(data.category));
+      if (data.income) tags.push(String(data.income));
+      if (data.educationLevel) tags.push(String(data.educationLevel));
     }
 
-    const scholar = new AdminScholar({
-      ...data,
+    // Parse deadline if present
+    let deadline = undefined;
+    if (data.deadline) {
+      const d = new Date(data.deadline);
+      if (!isNaN(d.getTime())) deadline = d;
+      else return res.status(400).json({ success: false, error: "Invalid deadline date" });
+    }
+
+    const doc = new AdminScholar({
+      name: data.name,
+      provider: data.provider,
+      type: data.type || "",
+      category: data.category || "",
+      generalQuota: data.generalQuota || "",
+      region: data.region || "",
+      income: data.income || "",
+      educationLevel: data.educationLevel || "",
+      benefits: data.benefits || "",
+      deadline,
+      status: data.status || "Open",
+      description: data.description || "",
+      eligibility: data.eligibility || "",
       tags,
-      createdBy: req.user?.id, // optional (JWT)
+      createdBy: data.createdBy || undefined,
     });
 
-    const saved = await scholar.save();
-
-    res.status(201).json({
-      success: true,
-      message: "Scholarship added successfully",
-      scholarshipCode: saved.code,
-      scholar: saved,
-    });
+    const saved = await doc.save();
+    return res.status(201).json({ success: true, message: "Scholarship created", scholar: saved });
   } catch (err) {
-    console.error("Create Scholar Error:", err);
-    res.status(500).json({
-      success: false,
-      error: "Server error while creating scholarship",
-    });
+    console.error("createScholar error:", err);
+    next(err);
   }
 };
 
 /**
- * GET ALL SCHOLARSHIPS
+ * Get all admin scholars
  */
-export const getAllScholars = async (req, res) => {
+export const getAllScholars = async (req, res, next) => {
   try {
     const filter = {};
-
+    // Optional query filters (e.g., ?status=Open or ?region=Karnataka)
     if (req.query.status) filter.status = req.query.status;
     if (req.query.region) filter.region = req.query.region;
-    if (req.query.educationLevel) filter.educationLevel = req.query.educationLevel;
 
-    const scholars = await AdminScholar.find(filter).sort({ createdAt: -1 });
-
-    res.json({
-      success: true,
-      total: scholars.length,
-      scholars,
-    });
+    const list = await AdminScholar.find(filter).sort({ createdAt: -1 }).limit(1000);
+    return res.json({ success: true, scholars: list });
   } catch (err) {
-    console.error("Get Scholars Error:", err);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch scholarships",
-    });
+    console.error("getAllScholars error:", err);
+    next(err);
   }
 };
