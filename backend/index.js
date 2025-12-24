@@ -521,8 +521,13 @@ app.get("/api/health", (req, res) => {
 
 /* ------------------------ Error handler ------------------------ */
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-  res.status(500).json({ success: false, error: "Internal server error" });
+  console.error("🔥 FULL ERROR:", err);
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
 });
 
 /* ------------------------ Start server ------------------------ */
