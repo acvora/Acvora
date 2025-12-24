@@ -5,27 +5,16 @@ import AdminScholar from "../models/AdminScholar.js";
  */
 export const createScholar = async (req, res, next) => {
   try {
-    const data = req.body;
+    const data = { ...req.body }; // clone body
 
-    // Basic validation
-    if (!data.name?.trim()) {
+    if (!data.name?.trim())
       return res.status(400).json({ success: false, message: "Name is required" });
-    }
-    if (!data.provider?.trim()) {
+
+    if (!data.provider?.trim())
       return res.status(400).json({ success: false, message: "Provider is required" });
-    }
-    if (!data.status) {
+
+    if (!data.status)
       return res.status(400).json({ success: false, message: "Status is required" });
-    }
-
-    // Auto-generate code if missing
-    if (!data.code) {
-      data.code = `SCH-${Date.now()}`;
-    }
-
-    // Convert date fields safely
-    if (data.startDate) data.startDate = new Date(data.startDate);
-    if (data.endDate) data.endDate = new Date(data.endDate);
 
     // Ensure arrays
     const arrayFields = [
@@ -40,18 +29,17 @@ export const createScholar = async (req, res, next) => {
     ];
 
     arrayFields.forEach((field) => {
-      if (data[field] && !Array.isArray(data[field])) {
-        data[field] = [data[field]];
+      if (!Array.isArray(data[field])) {
+        data[field] = data[field] ? [data[field]] : [];
       }
     });
 
-    const scholar = new AdminScholar(data);
-    const savedScholar = await scholar.save();
+    const scholar = await AdminScholar.create(data);
 
     return res.status(201).json({
       success: true,
       message: "Scholarship created successfully",
-      scholar: savedScholar,
+      scholar,
     });
   } catch (err) {
     console.error("Create Scholar Error:", err);
@@ -60,7 +48,7 @@ export const createScholar = async (req, res, next) => {
 };
 
 /**
- * GET ALL SCHOLARSHIPS
+ * GET ALL SCHOLARSHIPS ✅ (THIS WAS MISSING)
  */
 export const getAllScholars = async (req, res, next) => {
   try {
@@ -71,8 +59,7 @@ export const getAllScholars = async (req, res, next) => {
     if (req.query.level) filter.level = req.query.level;
 
     const scholars = await AdminScholar.find(filter)
-      .sort({ createdAt: -1 })
-      .limit(1000);
+      .sort({ createdAt: -1 });
 
     res.json({
       success: true,

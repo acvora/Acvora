@@ -1,131 +1,95 @@
 import mongoose from "mongoose";
 
+// 🔥 FORCE DELETE OLD MODEL IF EXISTS (IMPORTANT)
+if (mongoose.models.AdminScholar) {
+  delete mongoose.models.AdminScholar;
+}
+
 const adminScholarSchema = new mongoose.Schema(
   {
-    /* ===============================
-       1. Basic Scholarship Info
-    ================================ */
     name: { type: String, required: true, trim: true },
     code: { type: String, trim: true },
     provider: { type: String, required: true, trim: true },
-    providerType: { type: String, trim: true },
+    providerType: { type: String },
     country: { type: String, default: "India" },
-    state: { type: String, trim: true },
-    websiteURL: { type: String, trim: true },
+    state: { type: String },
+    websiteURL: { type: String },
 
-    /* ===============================
-       2. Category & Type
-    ================================ */
-    level: { type: String, trim: true },
+    level: { type: String },
+
+    // ✅ MUST BE ARRAY
     type: [{ type: String }],
+
     coverageType: { type: String },
 
-
-
-    /* ===============================
-       3. Courses & Study
-    ================================ */
     discipline: [{ type: String }],
     degreeTypes: [{ type: String }],
     modeOfStudy: { type: String },
 
-    /* ===============================
-       4. Eligibility
-    ================================ */
-    nationality: { type: String },
-    domicileReq: { type: String },
+    nationality: String,
+    domicileReq: String,
     categoryEligibility: [{ type: String }],
-    genderEligibility: { type: String },
-    disabilityEligibility: { type: String },
-    incomeLimitMin: { type: Number },
-    incomeLimitMax: { type: Number },
-    minAcademicQual: { type: String },
-    minMarksCGPA: { type: String },
-    gapYearAllowed: { type: String },
+    genderEligibility: String,
+    disabilityEligibility: String,
 
-    /* ===============================
-       5. Age & Academic Limits
-    ================================ */
-    minAge: { type: Number },
-    maxAge: { type: Number },
+    incomeLimitMin: Number,
+    incomeLimitMax: Number,
+
+    minAcademicQual: String,
+    minMarksCGPA: String,
+    gapYearAllowed: String,
+
+    minAge: Number,
+    maxAge: Number,
     yearOfStudy: [{ type: String }],
 
-    /* ===============================
-       6. Benefits
-    ================================ */
-    tuitionCoverage: { type: String },
-    tuitionAmount: { type: Number },
-    monthlyStipend: { type: Number },
-    annualAllowance: { type: Number },
-    hostelCoverage: { type: String },
-    booksAllowance: { type: Number },
-    travelAllowance: { type: Number },
-    examFeeCoverage: { type: String },
-    otherBenefits: { type: String },
-    benefits: { type: String },
+    tuitionCoverage: String,
+    tuitionAmount: Number,
+    monthlyStipend: Number,
+    annualAllowance: Number,
+    hostelCoverage: String,
+    booksAllowance: Number,
+    travelAllowance: Number,
+    examFeeCoverage: String,
 
-    /* ===============================
-       7. Duration
-    ================================ */
-    durationType: { type: String },
-    totalDuration: { type: Number },
-    totalDurationUnit: { type: String },
-    renewalCriteria: { type: String },
+    otherBenefits: String,
+    benefits: String,
 
-    /* ===============================
-       8. Application Details
-    ================================ */
-    appMode: { type: String },
-    appURL: { type: String },
-    startDate: { type: Date },
-    endDate: { type: Date },
-    deadlineTime: { type: String },
-    appFee: { type: Number },
+    durationType: String,
+    totalDuration: Number,
+    totalDurationUnit: String,
+    renewalCriteria: String,
 
-    /* ===============================
-       9. Documents
-    ================================ */
+    appMode: String,
+    appURL: String,
+    startDate: Date,
+    endDate: Date,
+    deadlineTime: String,
+    appFee: Number,
+
     requiredDocuments: [{ type: String }],
-
-    /* ===============================
-       10. Selection
-    ================================ */
     selectionMethod: [{ type: String }],
-    interviewMode: { type: String },
+    interviewMode: String,
 
-    /* ===============================
-       11. Disbursement
-    ================================ */
-    disbursementMode: { type: String },
-    disbursementFrequency: { type: String },
+    disbursementMode: String,
+    disbursementFrequency: String,
 
-    /* ===============================
-       12. Status & Visibility
-    ================================ */
     status: {
       type: String,
       enum: ["Draft", "Active", "Closed", "Expired"],
       default: "Draft",
     },
-    visibility: { type: String },
-    featured: { type: String },
 
-    /* ===============================
-       13. Search & Tags
-    ================================ */
+    visibility: String,
+    featured: String,
+
     tags: [{ type: String }],
 
-    /* ===============================
-       14. Verification
-    ================================ */
     verifiedAdmin: { type: String, default: "No" },
     sourceVerified: { type: String, default: "No" },
 
-    /* ===============================
-       Extra
-    ================================ */
-    description: { type: String },
-    eligibility: { type: String },
+    description: String,
+    eligibility: String,
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -135,8 +99,5 @@ const adminScholarSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const AdminScholar =
-  mongoose.models.AdminScholar ||
-  mongoose.model("AdminScholar", adminScholarSchema);
-
+const AdminScholar = mongoose.model("AdminScholar", adminScholarSchema);
 export default AdminScholar;
