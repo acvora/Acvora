@@ -18,7 +18,8 @@ const adminScholarSchema = new mongoose.Schema(
     ================================ */
     level: { type: String, trim: true },
     type: [{ type: String }],
-    coveragetype: [{ type: String }],
+    coverageType: { type: String },
+
 
 
     /* ===============================
