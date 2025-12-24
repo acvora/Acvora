@@ -1,77 +1,86 @@
-// backend/controllers/adminScholarController.js
 import AdminScholar from "../models/AdminScholar.js";
 
 /**
- * Create a new admin scholar (scholarship)
+ * CREATE SCHOLARSHIP
  */
 export const createScholar = async (req, res, next) => {
   try {
-    const data = req.body || {};
+    const data = req.body;
 
-    // Basic server-side validation
-    if (!data.name || !data.name.toString().trim()) {
-      return res.status(400).json({ success: false, error: "Name is required" });
+    // Basic validation
+    if (!data.name?.trim()) {
+      return res.status(400).json({ success: false, message: "Name is required" });
     }
-    if (!data.provider || !data.provider.toString().trim()) {
-      return res.status(400).json({ success: false, error: "Provider is required" });
+    if (!data.provider?.trim()) {
+      return res.status(400).json({ success: false, message: "Provider is required" });
     }
-
-    // Build tags (if not provided)
-    let tags = Array.isArray(data.tags) ? data.tags.map(String).filter(Boolean) : [];
-    if (!tags.length) {
-      if (data.category) tags.push(String(data.category));
-      if (data.income) tags.push(String(data.income));
-      if (data.educationLevel) tags.push(String(data.educationLevel));
+    if (!data.status) {
+      return res.status(400).json({ success: false, message: "Status is required" });
     }
 
-    // Parse deadline if present
-    let deadline = undefined;
-    if (data.deadline) {
-      const d = new Date(data.deadline);
-      if (!isNaN(d.getTime())) deadline = d;
-      else return res.status(400).json({ success: false, error: "Invalid deadline date" });
+    // Auto-generate code if missing
+    if (!data.code) {
+      data.code = `SCH-${Date.now()}`;
     }
 
-    const doc = new AdminScholar({
-      name: data.name,
-      provider: data.provider,
-      type: data.type || "",
-      category: data.category || "",
-      generalQuota: data.generalQuota || "",
-      region: data.region || "",
-      income: data.income || "",
-      educationLevel: data.educationLevel || "",
-      benefits: data.benefits || "",
-      deadline,
-      status: data.status || "Open",
-      description: data.description || "",
-      eligibility: data.eligibility || "",
-      tags,
-      createdBy: data.createdBy || undefined,
+    // Convert date fields safely
+    if (data.startDate) data.startDate = new Date(data.startDate);
+    if (data.endDate) data.endDate = new Date(data.endDate);
+
+    // Ensure arrays
+    const arrayFields = [
+      "type",
+      "discipline",
+      "degreeTypes",
+      "categoryEligibility",
+      "yearOfStudy",
+      "requiredDocuments",
+      "selectionMethod",
+      "tags",
+    ];
+
+    arrayFields.forEach((field) => {
+      if (data[field] && !Array.isArray(data[field])) {
+        data[field] = [data[field]];
+      }
     });
 
-    const saved = await doc.save();
-    return res.status(201).json({ success: true, message: "Scholarship created", scholar: saved });
+    const scholar = new AdminScholar(data);
+    const savedScholar = await scholar.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Scholarship created successfully",
+      scholar: savedScholar,
+    });
   } catch (err) {
-    console.error("createScholar error:", err);
+    console.error("Create Scholar Error:", err);
     next(err);
   }
 };
 
 /**
- * Get all admin scholars
+ * GET ALL SCHOLARSHIPS
  */
 export const getAllScholars = async (req, res, next) => {
   try {
     const filter = {};
-    // Optional query filters (e.g., ?status=Open or ?region=Karnataka)
-    if (req.query.status) filter.status = req.query.status;
-    if (req.query.region) filter.region = req.query.region;
 
-    const list = await AdminScholar.find(filter).sort({ createdAt: -1 }).limit(1000);
-    return res.json({ success: true, scholars: list });
+    if (req.query.status) filter.status = req.query.status;
+    if (req.query.state) filter.state = req.query.state;
+    if (req.query.level) filter.level = req.query.level;
+
+    const scholars = await AdminScholar.find(filter)
+      .sort({ createdAt: -1 })
+      .limit(1000);
+
+    res.json({
+      success: true,
+      count: scholars.length,
+      scholars,
+    });
   } catch (err) {
-    console.error("getAllScholars error:", err);
+    console.error("Get Scholars Error:", err);
     next(err);
   }
 };

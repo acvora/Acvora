@@ -1,6 +1,6 @@
 /* src/Pages/ScholarForm.css */
+/* (Existing CSS with additions for new elements) */
 
-/* Container for the entire form */
 .scholar-form-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #fefce8 0%, #ffffff 50%, #fefce8 100%);
@@ -19,6 +19,8 @@
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.05);
   padding: 3rem;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 /* Header styles */
@@ -39,6 +41,28 @@
   color: #6b7280;
   font-size: 1.125rem;
   margin: 0;
+}
+
+/* Section styles */
+.section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #111827;
+  display: inline-block;
 }
 
 /* Error message */
@@ -62,7 +86,7 @@
   flex-shrink: 0;
 }
 
-/* Form grid */
+/* Form grid - Adjusted for more fields */
 .scholar-form-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -81,7 +105,7 @@
   }
 }
 
-/* Full-width fields (description, eligibility, submit) */
+/* Full-width fields */
 .full-width {
   grid-column: 1 / -1;
 }
@@ -104,6 +128,31 @@
 
 .required {
   color: #dc2626;
+}
+
+/* Checkbox group for multi-select */
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background-color: #f9fafb;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
 }
 
 /* Inputs and selects */
@@ -250,5 +299,11 @@
   .field-textarea {
     padding: 0.625rem 0.875rem;
     font-size: 0.9375rem;
+  }
+
+  .checkbox-group {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    padding: 0.5rem;
   }
 }
