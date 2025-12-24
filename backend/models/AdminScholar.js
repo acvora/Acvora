@@ -96,7 +96,11 @@ const adminScholarSchema = new mongoose.Schema(
       ref: "User",
     },
   },
-  { timestamps: true }
+  {
+  timestamps: true,
+  collection: "admin_scholarships"
+}
+
 );
 
 const AdminScholar = mongoose.model("AdminScholar", adminScholarSchema);
