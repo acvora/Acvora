@@ -68,10 +68,12 @@ const adminScholarSchema = new mongoose.Schema(
     disbursementFrequency: String,
 
     status: {
-      type: String,
-      enum: ["Draft", "Active", "Closed", "Expired"],
-      default: "Draft",
-    },
+  type: String,
+  enum: ["Draft", "Active", "Closed", "Expired"],
+  default: "Draft",
+  trim: true,
+},
+
 
     tags: [{ type: String }],
 
