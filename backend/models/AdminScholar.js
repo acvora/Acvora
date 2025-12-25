@@ -1,10 +1,5 @@
 import mongoose from "mongoose";
 
-// 🔥 FORCE DELETE OLD MODEL IF EXISTS (IMPORTANT)
-if (mongoose.models.AdminScholar) {
-  delete mongoose.models.AdminScholar;
-}
-
 const adminScholarSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -15,16 +10,13 @@ const adminScholarSchema = new mongoose.Schema(
     state: { type: String },
     websiteURL: { type: String },
 
-    level: { type: String },
-
-    // ✅ MUST BE ARRAY
+    level: String,
     type: [{ type: String }],
-
-    coverageType: { type: String },
+    coverageType: String,
 
     discipline: [{ type: String }],
     degreeTypes: [{ type: String }],
-    modeOfStudy: { type: String },
+    modeOfStudy: String,
 
     nationality: String,
     domicileReq: String,
@@ -47,13 +39,14 @@ const adminScholarSchema = new mongoose.Schema(
     tuitionAmount: Number,
     monthlyStipend: Number,
     annualAllowance: Number,
+
     hostelCoverage: String,
     booksAllowance: Number,
     travelAllowance: Number,
     examFeeCoverage: String,
 
-    otherBenefits: String,
     benefits: String,
+    otherBenefits: String,
 
     durationType: String,
     totalDuration: Number,
@@ -80,9 +73,6 @@ const adminScholarSchema = new mongoose.Schema(
       default: "Draft",
     },
 
-    visibility: String,
-    featured: String,
-
     tags: [{ type: String }],
 
     verifiedAdmin: { type: String, default: "No" },
@@ -97,10 +87,9 @@ const adminScholarSchema = new mongoose.Schema(
     },
   },
   {
-  timestamps: true,
-  collection: "admin_scholarships"
-}
-
+    timestamps: true,
+    collection: "admin_scholarships",
+  }
 );
 
 const AdminScholar = mongoose.model("AdminScholar", adminScholarSchema);

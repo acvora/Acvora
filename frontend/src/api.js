@@ -1,9 +1,12 @@
 // src/api.js
 import axios from "axios";
 
-// Create axios instance with backend URL from .env
+const isLocal = window.location.hostname === "localhost";
+
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL + "/api"
+  baseURL: isLocal 
+    ? "http://localhost:5001/api" 
+    : (process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com") + "/api"
 });
 
 // Function to save a student

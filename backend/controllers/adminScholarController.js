@@ -1,96 +1,55 @@
 import AdminScholar from "../models/AdminScholar.js";
 
 /**
- * CREATE SCHOLARSHIP
+ * @desc    Create new scholarship
+ * @route   POST /api/admin/scholars
  */
 export const createScholar = async (req, res) => {
   try {
-    const raw = { ...req.body };
-    const data = {}; // ✅ FIX: define data
+    console.log("📥 Incoming Scholar Data:", req.body); // 👈 ADD THIS
 
-    // ✅ ALLOW ONLY FIELDS DEFINED IN SCHEMA
-    const allowedFields = [
-      "name","code","provider","providerType","country","state","websiteURL",
-      "level","type","coverageType",
-      "discipline","degreeTypes","modeOfStudy",
-      "nationality","domicileReq","categoryEligibility",
-      "genderEligibility","disabilityEligibility",
-      "incomeLimitMin","incomeLimitMax",
-      "minAcademicQual","minMarksCGPA","gapYearAllowed",
-      "minAge","maxAge","yearOfStudy",
-      "tuitionCoverage","tuitionAmount","monthlyStipend",
-      "annualAllowance","hostelCoverage","booksAllowance",
-      "travelAllowance","examFeeCoverage","otherBenefits","benefits",
-      "durationType","totalDuration","totalDurationUnit","renewalCriteria",
-      "appMode","appURL","startDate","endDate","deadlineTime","appFee",
-      "requiredDocuments","selectionMethod","interviewMode",
-      "disbursementMode","disbursementFrequency",
-      "status","visibility","featured","tags",
-      "verifiedAdmin","sourceVerified",
-      "description","eligibility"
-    ];
-
-    // 🔥 COPY ONLY ALLOWED FIELDS
-    allowedFields.forEach((key) => {
-      if (raw[key] !== "" && raw[key] !== undefined) {
-        data[key] = raw[key];
-      }
-    });
-
-    // 🔒 REQUIRED FIELDS
-    if (!data.name) {
-      return res.status(400).json({ success: false, message: "Name is required" });
-    }
-    if (!data.provider) {
-      return res.status(400).json({ success: false, message: "Provider is required" });
-    }
-    if (!data.status) {
-      return res.status(400).json({ success: false, message: "Status is required" });
+    // ✅ FIX 4: Backend validation (safety net)
+    if (!req.body.name || !req.body.provider) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and Provider are required",
+      });
     }
 
-    // 🧠 ARRAY FIELDS
-    const arrayFields = [
-      "type","discipline","degreeTypes","categoryEligibility",
-      "yearOfStudy","requiredDocuments","selectionMethod","tags"
-    ];
+    const scholar = new AdminScholar(req.body);
+    const savedScholar = await scholar.save();
 
-    arrayFields.forEach((field) => {
-      if (data[field] && !Array.isArray(data[field])) {
-        data[field] = [data[field]];
-      }
-    });
-
-    // 🔢 NUMBER FIELDS
-    const numberFields = [
-      "incomeLimitMin","incomeLimitMax","minAge","maxAge",
-      "tuitionAmount","monthlyStipend","annualAllowance",
-      "booksAllowance","travelAllowance","appFee"
-    ];
-
-    numberFields.forEach((field) => {
-      if (data[field] !== undefined) {
-        data[field] = Number(data[field]);
-        if (isNaN(data[field])) delete data[field];
-      }
-    });
-
-    // 📅 DATE FIELDS
-    if (data.startDate) data.startDate = new Date(data.startDate);
-    if (data.endDate) data.endDate = new Date(data.endDate);
-
-    const scholar = await AdminScholar.create(data);
-
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Scholarship created successfully",
-      scholar,
+      data: savedScholar,
     });
-
-  } catch (err) {
-    console.error("🔥 CREATE SCHOLAR ERROR:", err);
-    return res.status(500).json({
+  } catch (error) {
+    console.error("❌ Save error:", error); // 👈 ADD THIS
+    res.status(400).json({
       success: false,
-      message: err.message,
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * @desc    Get all scholarships
+ * @route   GET /api/admin/scholars
+ */
+export const getAllScholars = async (req, res) => {
+  try {
+    const scholars = await AdminScholar.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: scholars.length,
+      data: scholars,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

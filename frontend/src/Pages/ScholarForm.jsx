@@ -153,11 +153,29 @@ export default function ScholarForm() {
       const payload = {
         ...formData,
         code: formData.code || `SCH-${Date.now()}`,
+
+        incomeLimitMin: formData.incomeLimitMin ? Number(formData.incomeLimitMin) : undefined,
+        incomeLimitMax: formData.incomeLimitMax ? Number(formData.incomeLimitMax) : undefined,
+        minAge: formData.minAge ? Number(formData.minAge) : undefined,
+        maxAge: formData.maxAge ? Number(formData.maxAge) : undefined,
+        tuitionAmount: formData.tuitionAmount ? Number(formData.tuitionAmount) : undefined,
+        monthlyStipend: formData.monthlyStipend ? Number(formData.monthlyStipend) : undefined,
+        annualAllowance: formData.annualAllowance ? Number(formData.annualAllowance) : undefined,
+        booksAllowance: formData.booksAllowance ? Number(formData.booksAllowance) : undefined,
+        travelAllowance: formData.travelAllowance ? Number(formData.travelAllowance) : undefined,
+        appFee: formData.appFee ? Number(formData.appFee) : undefined,
       };
 
       // ❌ REMOVE EMPTY ARRAYS (CRITICAL FIX)
       Object.keys(payload).forEach((key) => {
         if (Array.isArray(payload[key]) && payload[key].length === 0) {
+          delete payload[key];
+        }
+      });
+
+      // ✅ FIX 3: Remove undefined & empty values before sending
+      Object.keys(payload).forEach((key) => {
+        if (payload[key] === undefined || payload[key] === "") {
           delete payload[key];
         }
       });
@@ -434,11 +452,11 @@ export default function ScholarForm() {
                   {yesNo.map((y, i) => <option key={i} value={y}>{y}</option>)}
                 </select>
               </div>
-              {renderMultiSelect("categoryEligibility", categories, "Category Eligibility")}
+              {renderMultiSelect("categoryEligibility", categories, "Category Eligibility (Multi-select)")}
               <div className="form-field">
                 <label className="field-label">Gender Eligibility</label>
                 <select name="genderEligibility" value={formData.genderEligibility} onChange={handleChange} className="field-select">
-                  <option value="">Select Gender</option>
+                  <option value="">Select</option>
                   {genders.map((g, i) => <option key={i} value={g}>{g}</option>)}
                 </select>
               </div>

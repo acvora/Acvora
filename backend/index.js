@@ -33,8 +33,6 @@ import savedExamsRouter from "./routes/savedExams.js";
 // admin scholar routes
 import adminScholarRoutes from "./routes/adminScholarRoutes.js";
 
-
-
 dotenv.config();
 const app = express();
 
@@ -45,7 +43,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-/* ------------------------ CORS (FIXED) ------------------------ */
+/* ------------------------ CORS (UPDATED - FIX 2) ------------------------ */
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
 
@@ -64,13 +62,16 @@ const ALLOWED_ORIGINS = [
   "https://www.acvora-5d473m4wf-acvoras-projects.vercel.app"
 ];
 
-
-
 // ✅ must be above express.json and all routes
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      if (
+        !origin ||
+        origin.includes("localhost") ||
+        origin.includes("vercel.app") ||
+        origin.includes("acvora")
+      ) {
         callback(null, true);
       } else {
         console.warn("❌ Blocked by CORS:", origin);
@@ -108,7 +109,7 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-/* ------------------------ Mongo connection ------------------------ */
+/* ------------------------ Mongo connection (UPDATED - FIX 1) ------------------------ */
 const mongoURI = process.env.MONGO_URI;
 
 if (!mongoURI) {
@@ -117,17 +118,12 @@ if (!mongoURI) {
 }
 
 mongoose
-  .connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 10000,
-  })
+  .connect(mongoURI)  // ✅ Removed deprecated options: useNewUrlParser, useUnifiedTopology, serverSelectionTimeoutMS
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch((err) => {
     console.error("❌ MongoDB Atlas connection error:", err.message);
     process.exit(1);
   });
-
 
 /* ------------------------ Registration Schema ------------------------ */
 const registrationSchema = new mongoose.Schema({
@@ -512,7 +508,6 @@ app.use("/api/savedExams", savedExamsRouter);
 
 // mount adminscholar API
 app.use("/api/adminscholar", adminScholarRoutes);
-
 
 /* ------------------------ Health check ------------------------ */
 app.get("/api/health", (req, res) => {
