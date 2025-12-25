@@ -269,34 +269,59 @@ export default function Scholarship() {
         const uniList = Array.isArray(uniData) ? uniData : (uniData?.scholarships || uniData?.data || uniData || []);
 
         const adminDataRaw = adminRes && adminRes.ok ? await adminRes.json() : null;
-        // admin endpoint returns { scholars: [...] } per controller
-        const adminList = adminDataRaw ? (adminDataRaw.scholars || adminDataRaw) : [];
+        const adminList = Array.isArray(adminDataRaw?.data)
+          ? adminDataRaw.data
+          : [];
 
         // Normalize entries to consistent shape
         const normalize = (item, source) => {
-          // item might already have fields; return normalized object
-          return {
-            _id: item._id || item.id || (source === "admin" ? `admin-${item.name}-${item.provider}` : undefined),
-            name: item.name || item.title || item.scholarshipName || "Unnamed",
-            provider: item.provider || item.providerName || item.source || "Unknown Provider",
-            category: item.category || item.stream || "",
-            income: item.income || item.familyIncome || "",
-            educationLevel: item.educationLevel || item.level || "",
-            benefits: item.benefits || item.amount || "",
-            deadline: item.deadline || item.date || item.lastDate || null,
-            status: item.status || (item.deadline ? (new Date(item.deadline) > new Date() ? "Open" : "Closed") : "Open"),
-            description: item.description || item.desc || "",
-            eligibility: item.eligibility || "",
-            type: item.type || "",
-            region: item.region || item.state || item.location || "",
-            generalQuota: item.generalQuota || item.quota || "",
-            tags: Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []),
-            universityId: item.universityId || item.university || item.universityObj || null,
-            universityName: item.universityName || (item.universityObj && (item.universityObj.instituteName || item.universityObj.name)) || "",
-            logo: Array.isArray(item.logo) ? item.logo : (item.logo ? [item.logo] : []),
-            rawSource: source,
-            raw: item,
-          };
+          if (source === "admin") {
+            return {
+              _id: item._id,
+              name: item.name,
+              provider: item.provider,
+              category: item.category || "",
+              income: item.incomeLimitMax || "",
+              educationLevel: item.educationLevel || item.level || "",
+              benefits: item.benefits || item.otherBenefits || "",
+              deadline: item.deadline || item.endDate || null,
+              status: item.status || "Active",
+              description: item.description || "",
+              eligibility: item.eligibility || "",
+              type: Array.isArray(item.type) ? item.type.join(", ") : item.type || "",
+              region: item.region || item.state || "",
+              generalQuota: item.generalQuota || "",
+              tags: Array.isArray(item.tags) ? item.tags : [],
+              universityId: null,
+              universityName: item.provider || "Admin Scholarship",
+              logo: [],
+              rawSource: source,
+              raw: item,
+            };
+          } else {
+            return {
+              _id: item._id || item.id || undefined,
+              name: item.name || item.title || item.scholarshipName || "Unnamed",
+              provider: item.provider || item.providerName || item.source || "Unknown Provider",
+              category: item.category || item.stream || "",
+              income: item.income || item.familyIncome || "",
+              educationLevel: item.educationLevel || item.level || "",
+              benefits: item.benefits || item.amount || "",
+              deadline: item.deadline || item.date || item.lastDate || null,
+              status: item.status || (item.deadline ? (new Date(item.deadline) > new Date() ? "Open" : "Closed") : "Open"),
+              description: item.description || item.desc || "",
+              eligibility: item.eligibility || "",
+              type: item.type || "",
+              region: item.region || item.state || item.location || "",
+              generalQuota: item.generalQuota || item.quota || "",
+              tags: Array.isArray(item.tags) ? item.tags : (item.tags ? [item.tags] : []),
+              universityId: item.universityId || item.university || item.universityObj || null,
+              universityName: item.universityName || (item.universityObj && (item.universityObj.instituteName || item.universityObj.name)) || "",
+              logo: Array.isArray(item.logo) ? item.logo : (item.logo ? [item.logo] : []),
+              rawSource: source,
+              raw: item,
+            };
+          }
         };
 
         const normUni = (Array.isArray(uniList) ? uniList : []).map((i) => normalize(i, "university"));
@@ -377,7 +402,11 @@ export default function Scholarship() {
 
       // tab handling (Upcoming / Ongoing / Closed) - we attempt to map to status
       if (activeTab && activeTab !== "All") {
-        const tmap = { Upcoming: "upcoming", Ongoing: "open", Closed: "closed" };
+        const tmap = {
+          Upcoming: "draft",
+          Ongoing: "active",
+          Closed: "closed",
+        };
         const want = (tmap[activeTab] || activeTab).toLowerCase();
         if ((s.status || "").toLowerCase() !== want) return false;
       }
