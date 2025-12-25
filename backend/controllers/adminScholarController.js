@@ -2,13 +2,13 @@ import AdminScholar from "../models/AdminScholar.js";
 
 /**
  * @desc    Create new scholarship
- * @route   POST /api/admin/scholars
+ * @route   POST /api/adminscholar
  */
 export const createScholar = async (req, res) => {
   try {
-    console.log("📥 Incoming Scholar Data:", req.body); // 👈 ADD THIS
+    console.log("📥 Incoming Scholar Data:", req.body);
 
-    // ✅ FIX 4: Backend validation (safety net)
+    // ✅ Required field validation
     if (!req.body.name || !req.body.provider) {
       return res.status(400).json({
         success: false,
@@ -16,43 +16,40 @@ export const createScholar = async (req, res) => {
       });
     }
 
-    // ✅ FIX 3: Backend guard for tags (safety net)
+    // ✅ Normalize status (extra safety)
+    req.body.status = req.body.status
+      ? req.body.status.charAt(0).toUpperCase() +
+        req.body.status.slice(1).toLowerCase()
+      : "Draft";
+
+    // ✅ Clean tags
     if (Array.isArray(req.body.tags)) {
-      req.body.tags = req.body.tags.filter(Boolean);
+      req.body.tags = req.body.tags.map(t => t.trim()).filter(Boolean);
     }
 
     const scholar = new AdminScholar(req.body);
     const savedScholar = await scholar.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Scholarship created successfully",
       data: savedScholar,
     });
-  } catch (error) {
-    // ✅ STEP 1: TEMPORARY DEBUG PATCH (MANDATORY)
-    console.error("❌ FULL SAVE ERROR:", error);
-    console.error("❌ ERROR NAME:", error.name);
-    console.error("❌ ERROR MESSAGE:", error.message);
-    console.error("❌ ERROR STACK:", error.stack);
 
-    if (error.errors) {
-      console.error("❌ MONGOOSE VALIDATION ERRORS:", error.errors);
-    }
+  } catch (error) {
+    console.error("❌ FULL SAVE ERROR:", error);
 
     return res.status(500).json({
       success: false,
       message: "AdminScholar save failed",
-      errorName: error.name,
-      errorMessage: error.message,
-      errorErrors: error.errors || null,
+      error: error.message,
     });
   }
 };
 
 /**
  * @desc    Get all scholarships
- * @route   GET /api/admin/scholars
+ * @route   GET /api/adminscholar
  */
 export const getAllScholars = async (req, res) => {
   try {
