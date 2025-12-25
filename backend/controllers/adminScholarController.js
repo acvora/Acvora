@@ -30,11 +30,22 @@ export const createScholar = async (req, res) => {
       data: savedScholar,
     });
   } catch (error) {
-    console.error("❌ Save error:", error); // 👈 ADD THIS
-    // ✅ IMPROVEMENT: Use 500 for server/DB errors (not client input issues)
-    res.status(500).json({
+    // ✅ STEP 1: TEMPORARY DEBUG PATCH (MANDATORY)
+    console.error("❌ FULL SAVE ERROR:", error);
+    console.error("❌ ERROR NAME:", error.name);
+    console.error("❌ ERROR MESSAGE:", error.message);
+    console.error("❌ ERROR STACK:", error.stack);
+
+    if (error.errors) {
+      console.error("❌ MONGOOSE VALIDATION ERRORS:", error.errors);
+    }
+
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "AdminScholar save failed",
+      errorName: error.name,
+      errorMessage: error.message,
+      errorErrors: error.errors || null,
     });
   }
 };
