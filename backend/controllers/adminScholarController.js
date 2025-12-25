@@ -16,6 +16,11 @@ export const createScholar = async (req, res) => {
       });
     }
 
+    // ✅ FIX 3: Backend guard for tags (safety net)
+    if (Array.isArray(req.body.tags)) {
+      req.body.tags = req.body.tags.filter(Boolean);
+    }
+
     const scholar = new AdminScholar(req.body);
     const savedScholar = await scholar.save();
 
@@ -26,7 +31,8 @@ export const createScholar = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Save error:", error); // 👈 ADD THIS
-    res.status(400).json({
+    // ✅ IMPROVEMENT: Use 500 for server/DB errors (not client input issues)
+    res.status(500).json({
       success: false,
       message: error.message,
     });

@@ -164,6 +164,9 @@ export default function ScholarForm() {
         booksAllowance: formData.booksAllowance ? Number(formData.booksAllowance) : undefined,
         travelAllowance: formData.travelAllowance ? Number(formData.travelAllowance) : undefined,
         appFee: formData.appFee ? Number(formData.appFee) : undefined,
+
+        // ✅ FIX 1: Add totalDuration casting
+        totalDuration: formData.totalDuration ? Number(formData.totalDuration) : undefined,
       };
 
       // ❌ REMOVE EMPTY ARRAYS (CRITICAL FIX)
@@ -180,15 +183,17 @@ export default function ScholarForm() {
         }
       });
 
-      // ✅ BUILD TAGS SAFELY
+      // ✅ FIX 2: Clean tags array (flatten first, then trim & filter)
       payload.tags = [
         ...(formData.categoryEligibility || []),
         ...(formData.type || []),
         formData.level,
-        ...formData.searchKeywords.split(",").map(t => t.trim()).filter(Boolean),
-        ...formData.courseTags.split(",").map(t => t.trim()).filter(Boolean),
-        ...formData.locationTags.split(",").map(t => t.trim()).filter(Boolean),
-      ];
+        ...formData.searchKeywords.split(","),
+        ...formData.courseTags.split(","),
+        ...formData.locationTags.split(","),
+      ]
+        .map(t => t.trim())
+        .filter(Boolean);
 
       // ✅ CHANGE 3 — EXTRA SAFETY FOR TYPE (OPTIONAL BUT RECOMMENDED)
       if (payload.type && !Array.isArray(payload.type)) {
