@@ -51,6 +51,7 @@ import UniversityPage from "./Pages/UniversityPage";
 import UniversityRegister from "./Pages/UniversityRegister";
 
 import ScholarForm from "./Pages/ScholarForm";
+import Dashboard from "./Pages/Dashboard";
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
       <Routes>
         {/* Main Pages */}
         <Route path="/" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/passwordreset" element={<PasswordReset />} />
         <Route path="/explorecollegespage" element={<ExploreCollegesPage />} />
