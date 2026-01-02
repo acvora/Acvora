@@ -1,44 +1,62 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import Signup from "../models/Signup.js";
+import firebaseAuth from "../middleware/firebaseAuth.js";
 
 const router = express.Router();
 
-// POST /api/signup
-router.post("/", async (req, res) => {
+/**
+ * POST /api/signup
+ * Firebase → MongoDB (same structure)
+ */
+router.post("/", firebaseAuth, async (req, res) => {
   try {
-    const { name, phone, email, password, address, pincode, firebaseId } = req.body;
+    // 🔐 Firebase se aaya hua data
+    const { uid, email } = req.user;
 
-    if (!name || !phone || !email) {
-      return res.status(400).json({ success: false, error: "Missing required fields" });
+    // 📦 Frontend se aaya hua profile data
+    const { name, phone, address, pincode } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields",
+      });
     }
 
-    const existing = await Signup.findOne({ email });
-    if (existing) {
-      return res.status(409).json({ success: false, error: "Email already exists" });
+    // 🔍 Check existing user
+    let user = await Signup.findOne({ firebaseId: uid });
+
+    // 🆕 First-time signup
+    if (!user) {
+      // 🔐 Dummy strong password (Firebase already handles auth)
+      const hashedPassword = await bcrypt.hash(uid, 10);
+
+      user = new Signup({
+        name,
+        phone,
+        email,          // from Firebase
+        password: hashedPassword, // 🔒 keep Mongo structure same
+        firebaseId: uid,
+        address,
+        pincode,
+      });
+
+      await user.save();
     }
 
-    let hashedPassword = "";
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    }
-
-    const newUser = new Signup({
-      name,
-      phone,
-      email,
-      password: hashedPassword,
-      firebaseId,
-      address,
-      pincode,
+    res.status(200).json({
+      success: true,
+      message: "User synced from Firebase to MongoDB",
+      user,
     });
 
-    await newUser.save();
-
-    res.status(201).json({ success: true, message: "Signup successful", user: newUser });
   } catch (err) {
-    console.error("❌ Signup error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error("❌ Signup sync error:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
   }
 });
 
