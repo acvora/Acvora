@@ -18,6 +18,7 @@
   display: flex;
   flex-direction: column;
   padding: 0;
+  padding-top: 70px;
 }
 
 body {
@@ -47,7 +48,7 @@ h2 {
 .course-form-header {
   background: linear-gradient(135deg, #111827, #181813);
   text-align: center;
-  padding: 90px 16px 70px;
+  padding: 40px 16px 30px;
   position: relative;
 }
 
@@ -84,7 +85,7 @@ form {
   width: 75%;
   max-width: 1150px;
   margin: 20px auto;
-  margin-top: -35px; /* pulls step card into header */
+  margin-top: -20px; /* Adjusted to pull step card less into header */
   z-index: 10;
   position: relative;
 }
@@ -115,7 +116,8 @@ form {
   transition: all 0.2s ease;
   position: relative;
   z-index: 2;
-  max-width: 300px;
+  max-width: 200px; /* Reduced from 300px for narrower box */
+  width: 100%; /* Ensure it takes full available space up to max-width */
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -460,7 +462,7 @@ form {
 
 @media (max-width: 640px) {
   .course-form-header {
-    padding: 70px 12px 60px;
+    padding: 30px 12px 20px;
   }
 
   .course-form-title {
@@ -468,7 +470,7 @@ form {
   }
 
   .step-navigation {
-    margin-top: -25px;
+    margin-top: -15px;
   }
 
   .card {
@@ -482,5 +484,6 @@ form {
   .step-box {
     font-size: 0.75rem;
     padding: 10px 6px;
+    max-width: 180px; /* Slightly reduced for mobile */
   }
 }
