@@ -8,7 +8,8 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import UniversityRegistration from "./models/University.js";
+import University from "./models/University.js";
+
 
 // Routes
 import cutoffRoutes from "./routes/cutoffRoutes.js";

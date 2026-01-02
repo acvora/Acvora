@@ -238,7 +238,7 @@ export default function MultiStepForm() {
       // -----------------------------
       const baseUrl = "https://acvora-07fo.onrender.com";
 
-      const res = await fetch(`${baseUrl}/api/institute-registration`, {
+      const res = await fetch(`${baseUrl}/api/university-registration`, {
         method: "POST",
         body: payload,
       });
@@ -281,7 +281,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.file);
         await uploadFile(
-          `${baseUrl}/api/institutes/${instituteId}/courses/upload`,
+          `${baseUrl}/api/universities/${instituteId}/courses/upload`,
           fd,
           "Courses"
         );
@@ -311,7 +311,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.placementsExcel);
         await uploadFile(
-          `${baseUrl}/api/institutes/${instituteId}/placements/upload`,
+          `${baseUrl}/api/universities/${instituteId}/placements/upload`,
           fd,
           "Placements"
         );
@@ -323,10 +323,11 @@ export default function MultiStepForm() {
         files.eventPhotos?.forEach((f) => fd.append("eventPhotos", f));
         files.galleryImages?.forEach((f) => fd.append("galleryImages", f));
         await uploadFile(
-          `${baseUrl}/api/institutes/${instituteId}/gallery/upload`,
-          fd,
-          "Gallery"
-        );
+  `${baseUrl}/api/universities/${instituteId}/gallery/upload`,
+  fd,
+  "Gallery"
+);
+
       }
 
       if (files.recruitersLogos?.length) {
