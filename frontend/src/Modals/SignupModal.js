@@ -83,16 +83,16 @@ const StudentSignup = () => {
       });
 
       // 4️⃣ MongoDB sync
-      const token = await user.getIdToken(true);
       await fetch(`${process.env.REACT_APP_API_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: formData.name,
           phone: formData.phone,
+          email: formData.email,
+          firebaseId: user.uid,
           address: formData.address,
           pincode: formData.pincode,
         }),

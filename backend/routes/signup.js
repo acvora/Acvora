@@ -1,62 +1,36 @@
+// routes/signup.js
 import express from "express";
-import bcrypt from "bcryptjs";
 import Signup from "../models/Signup.js";
-import firebaseAuth from "../middleware/firebaseAuth.js";
 
 const router = express.Router();
 
-/**
- * POST /api/signup
- * Firebase → MongoDB (same structure)
- */
-router.post("/", firebaseAuth, async (req, res) => {
+// CREATE user after Firebase signup
+router.post("/", async (req, res) => {
   try {
-    // 🔐 Firebase se aaya hua data
-    const { uid, email } = req.user;
+    const { name, email, phone, firebaseId } = req.body;
 
-    // 📦 Frontend se aaya hua profile data
-    const { name, phone, address, pincode } = req.body;
-
-    if (!name || !phone) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required fields",
-      });
+    if (!firebaseId || !email) {
+      return res.status(400).json({ message: "firebaseId and email required" });
     }
 
-    // 🔍 Check existing user
-    let user = await Signup.findOne({ firebaseId: uid });
+    let user = await Signup.findOne({ firebaseId });
 
-    // 🆕 First-time signup
     if (!user) {
-      // 🔐 Dummy strong password (Firebase already handles auth)
-      const hashedPassword = await bcrypt.hash(uid, 10);
-
-      user = new Signup({
+      user = await Signup.create({
         name,
+        email,
         phone,
-        email,          // from Firebase
-        password: hashedPassword, // 🔒 keep Mongo structure same
-        firebaseId: uid,
-        address,
-        pincode,
+        firebaseId,
       });
-
-      await user.save();
+      console.log("✅ User created in MongoDB:", firebaseId);
+    } else {
+      console.log("ℹ️ User already exists:", firebaseId);
     }
 
-    res.status(200).json({
-      success: true,
-      message: "User synced from Firebase to MongoDB",
-      user,
-    });
-
+    res.status(200).json(user);
   } catch (err) {
-    console.error("❌ Signup sync error:", err);
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
+    console.error("❌ Signup save error:", err.message);
+    res.status(500).json({ message: "Signup failed" });
   }
 });
 

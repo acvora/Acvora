@@ -83,6 +83,18 @@ export default function StudentLogin({ onLogin }) {
 
     await setDoc(docRef, newProfile, { merge: true });
     if (onLogin) onLogin(newProfile);
+
+    // ✅ MongoDB sync on login (auto-create if missing)
+    await fetch(`${process.env.REACT_APP_API_URL}/signup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: fallbackName,
+        email: userEmail,
+        firebaseId: uid,
+      }),
+    });
+
     return newProfile;
   };
 
