@@ -8,7 +8,8 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import UniversityRegistration from "./models/University.js";
+import University from "./models/University.js";
+
 
 // Routes
 import cutoffRoutes from "./routes/cutoffRoutes.js";
@@ -33,8 +34,6 @@ import savedExamsRouter from "./routes/savedExams.js";
 // admin scholar routes
 import adminScholarRoutes from "./routes/adminScholarRoutes.js";
 
-
-
 dotenv.config();
 const app = express();
 
@@ -45,7 +44,7 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-/* ------------------------ CORS (FIXED) ------------------------ */
+/* ------------------------ CORS (UPDATED - FIX 2) ------------------------ */
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
 
@@ -64,13 +63,16 @@ const ALLOWED_ORIGINS = [
   "https://www.acvora-5d473m4wf-acvoras-projects.vercel.app"
 ];
 
-
-
 // ✅ must be above express.json and all routes
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      if (
+        !origin ||
+        origin.includes("localhost") ||
+        origin.includes("vercel.app") ||
+        origin.includes("acvora")
+      ) {
         callback(null, true);
       } else {
         console.warn("❌ Blocked by CORS:", origin);
@@ -108,7 +110,7 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-/* ------------------------ Mongo connection ------------------------ */
+/* ------------------------ Mongo connection (UPDATED - FIX 1) ------------------------ */
 const mongoURI = process.env.MONGO_URI;
 
 if (!mongoURI) {
@@ -117,17 +119,12 @@ if (!mongoURI) {
 }
 
 mongoose
-  .connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 10000,
-  })
+  .connect(mongoURI)  // ✅ Removed deprecated options: useNewUrlParser, useUnifiedTopology, serverSelectionTimeoutMS
   .then(() => console.log("✅ Connected to MongoDB Atlas"))
   .catch((err) => {
     console.error("❌ MongoDB Atlas connection error:", err.message);
     process.exit(1);
   });
-
 
 /* ------------------------ Registration Schema ------------------------ */
 const registrationSchema = new mongoose.Schema({
@@ -513,7 +510,6 @@ app.use("/api/savedExams", savedExamsRouter);
 // mount adminscholar API
 app.use("/api/adminscholar", adminScholarRoutes);
 
-
 /* ------------------------ Health check ------------------------ */
 app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "Server is running" });
@@ -521,8 +517,13 @@ app.get("/api/health", (req, res) => {
 
 /* ------------------------ Error handler ------------------------ */
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-  res.status(500).json({ success: false, error: "Internal server error" });
+  console.error("🔥 FULL ERROR:", err);
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
 });
 
 /* ------------------------ Start server ------------------------ */

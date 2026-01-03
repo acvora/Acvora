@@ -1,77 +1,69 @@
-// backend/controllers/adminScholarController.js
 import AdminScholar from "../models/AdminScholar.js";
 
 /**
- * Create a new admin scholar (scholarship)
+ * @desc    Create new scholarship
+ * @route   POST /api/adminscholar
  */
-export const createScholar = async (req, res, next) => {
+export const createScholar = async (req, res) => {
   try {
-    const data = req.body || {};
+    console.log("📥 Incoming Scholar Data:", req.body);
 
-    // Basic server-side validation
-    if (!data.name || !data.name.toString().trim()) {
-      return res.status(400).json({ success: false, error: "Name is required" });
-    }
-    if (!data.provider || !data.provider.toString().trim()) {
-      return res.status(400).json({ success: false, error: "Provider is required" });
-    }
-
-    // Build tags (if not provided)
-    let tags = Array.isArray(data.tags) ? data.tags.map(String).filter(Boolean) : [];
-    if (!tags.length) {
-      if (data.category) tags.push(String(data.category));
-      if (data.income) tags.push(String(data.income));
-      if (data.educationLevel) tags.push(String(data.educationLevel));
+    // ✅ Required field validation
+    if (!req.body.name || !req.body.provider) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and Provider are required",
+      });
     }
 
-    // Parse deadline if present
-    let deadline = undefined;
-    if (data.deadline) {
-      const d = new Date(data.deadline);
-      if (!isNaN(d.getTime())) deadline = d;
-      else return res.status(400).json({ success: false, error: "Invalid deadline date" });
+    // ✅ Normalize status (extra safety)
+    req.body.status = req.body.status
+      ? req.body.status.charAt(0).toUpperCase() +
+        req.body.status.slice(1).toLowerCase()
+      : "Draft";
+
+    // ✅ Clean tags
+    if (Array.isArray(req.body.tags)) {
+      req.body.tags = req.body.tags.map(t => t.trim()).filter(Boolean);
     }
 
-    const doc = new AdminScholar({
-      name: data.name,
-      provider: data.provider,
-      type: data.type || "",
-      category: data.category || "",
-      generalQuota: data.generalQuota || "",
-      region: data.region || "",
-      income: data.income || "",
-      educationLevel: data.educationLevel || "",
-      benefits: data.benefits || "",
-      deadline,
-      status: data.status || "Open",
-      description: data.description || "",
-      eligibility: data.eligibility || "",
-      tags,
-      createdBy: data.createdBy || undefined,
+    const scholar = new AdminScholar(req.body);
+    const savedScholar = await scholar.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Scholarship created successfully",
+      data: savedScholar,
     });
 
-    const saved = await doc.save();
-    return res.status(201).json({ success: true, message: "Scholarship created", scholar: saved });
-  } catch (err) {
-    console.error("createScholar error:", err);
-    next(err);
+  } catch (error) {
+    console.error("❌ FULL SAVE ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "AdminScholar save failed",
+      error: error.message,
+    });
   }
 };
 
 /**
- * Get all admin scholars
+ * @desc    Get all scholarships
+ * @route   GET /api/adminscholar
  */
-export const getAllScholars = async (req, res, next) => {
+export const getAllScholars = async (req, res) => {
   try {
-    const filter = {};
-    // Optional query filters (e.g., ?status=Open or ?region=Karnataka)
-    if (req.query.status) filter.status = req.query.status;
-    if (req.query.region) filter.region = req.query.region;
+    const scholars = await AdminScholar.find().sort({ createdAt: -1 });
 
-    const list = await AdminScholar.find(filter).sort({ createdAt: -1 }).limit(1000);
-    return res.json({ success: true, scholars: list });
-  } catch (err) {
-    console.error("getAllScholars error:", err);
-    next(err);
+    res.status(200).json({
+      success: true,
+      count: scholars.length,
+      data: scholars,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
