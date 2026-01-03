@@ -45,7 +45,7 @@ const admissionSchema = new mongoose.Schema({
 const branchSchema = new mongoose.Schema({
   name: String,
   avgPackage: String,
-  highestPackage: String,
+  highestPackage: String,
 });
 
 /* ---------------- Facilities Sub-schema ---------------- */
@@ -67,7 +67,7 @@ const universityRegistrationSchema = new mongoose.Schema({
   faculty: String,
 
   // Step 1: About Section
-  description: String,       // ✅ matches frontend AboutUs.jsx
+  description: String, // ✅ matches frontend AboutUs.jsx
   aboutImages: [String],
 
   // Step 2: Contact & Location
@@ -107,7 +107,7 @@ const universityRegistrationSchema = new mongoose.Schema({
 
   // Step 7: Facilities
   facilities: [facilitySchema],
-  
+
   // Step 8: International Section
   intlStudentOffice: String,
   countriesEnrolled: String,
@@ -164,6 +164,15 @@ const universityRegistrationSchema = new mongoose.Schema({
     enum: ["free", "standard", "premium"],
     default: "free",
   },
+
+  status: {
+    type: String,
+    enum: ["hold", "approved", "flagged", "blocked"],
+    default: "hold", // All new registrations start here
+  },
+
+  // ✅ NEW: Admin Remarks (Optional)
+  adminRemarks: { type: String, default: "" },
 
   // Declaration
   declaration: { type: Boolean, default: false },

@@ -42,7 +42,10 @@ const modules = [
 
 const AdminSidebar = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="w-72 bg-gray-900 h-screen sticky top-0 overflow-y-auto text-gray-100 p-4 border-r border-gray-800">
+    <div
+      className="w-72 bg-gray-900 fixed top-16 left-0 h-[calc(100vh-4rem)] 
+            overflow-y-auto text-gray-100 p-4 border-r border-gray-800"
+    >
       <div className="flex items-center gap-3 px-2 mb-8 border-b border-gray-800 pb-6">
         <div className="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-gray-900 text-xl shadow-lg shadow-yellow-500/20">
           A
