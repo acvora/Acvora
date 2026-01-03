@@ -116,7 +116,7 @@ export default function CourseRegister() {
     setSpecializations((prev) => {
       const removed = prev[index];
       if (removed?.imagePreview) URL.revokeObjectURL(removed.imagePreview);
-      const next = prev.filter((_, i) => i !== i !== index);
+      const next = prev.filter((_, i) => i !== index);
       return next.length ? next : [{ name: "", image: null, imagePreview: "", description: "" }];
     });
   };
@@ -267,7 +267,7 @@ export default function CourseRegister() {
         return (
           <div className="form-step">
             <div className="card">
-              <h2 className="section-title">Basic Information</h2>
+              <h2 className="section-title">Basic & Key Details</h2>
               <div className="two-col">
                 <div className="form-field">
                   <label className="field-label">
@@ -309,10 +309,6 @@ export default function CourseRegister() {
                   required
                 />
               </div>
-            </div>
-
-            <div className="card">
-              <h2 className="section-title">Key Details</h2>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="form-field">
                   <label className="field-label">
@@ -670,11 +666,6 @@ export default function CourseRegister() {
     }
   };
 
-  // Dynamic step label
-  const currentStepLabel = currentStep === 1 
-    ? stepTitles[1] 
-    : `${currentStep} ${stepTitles[currentStep]}`;
-
   return (
     <div className="course-form-container">
       <header className="course-form-header">
@@ -684,9 +675,18 @@ export default function CourseRegister() {
 
       <nav className="step-navigation">
         <div className="steps-container">
-          <div className="step-box active" style={{ flex: 'none', margin: '0 auto' }}>
-            {currentStepLabel}
-          </div>
+          {[1, 2, 3].map((step, index) => (
+            <React.Fragment key={step}>
+              <div
+                className={`step-box ${step < currentStep ? "completed" : step === currentStep ? "active" : ""}`}
+              >
+                {stepTitles[step]}
+              </div>
+              {step < 3 && (
+                <div className={`connector-line ${step < currentStep ? "progress" : ""}`} />
+              )}
+            </React.Fragment>
+          ))}
         </div>
       </nav>
 

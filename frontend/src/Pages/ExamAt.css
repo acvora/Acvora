@@ -1,0 +1,144 @@
+:root {
+  --yellow500: #F59E0B;
+  --gray100: #F3F4F6;
+  --gray900: #181813;
+  --gray500: #6B7280;
+}
+
+/* Page */
+.exam-page {
+  min-height: 100vh;
+  background: var(--gray100);
+  padding-top: 90px;
+  padding-bottom: 40px;
+  font-family: Arial, sans-serif;
+}
+
+/* Card */
+.exam-card {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+.exam-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.exam-header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--gray900);
+  margin-bottom: 10px;
+}
+
+.divider {
+  width: 150px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gray500), var(--yellow500));
+  margin: 0 auto;
+  border-radius: 999px;
+}
+
+/* Sections */
+.exam-section {
+  margin-bottom: 40px;
+}
+
+.exam-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.exam-section-header svg {
+  width: 26px;
+  height: 26px;
+  color: var(--gray500);
+}
+
+.exam-section-header h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gray900);
+  border-bottom: 2px solid var(--gray500);
+  padding-bottom: 6px;
+}
+
+/* Labels */
+.exam-section label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--gray900);
+}
+
+/* Inputs */
+.exam-section input,
+.exam-section select,
+.exam-section textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.exam-section textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.exam-section input:focus,
+.exam-section select:focus,
+.exam-section textarea:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--gray900);
+  transform: translateY(-1px);
+}
+
+/* Actions */
+.exam-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.exam-submit-btn {
+  background: var(--yellow500);
+  color: white;
+  border: none;
+  padding: 14px 34px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4);
+}
+
+.exam-submit-btn:hover {
+  background: #B45309;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(245, 158, 11, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .exam-card {
+    padding: 20px;
+  }
+
+  .exam-header h1 {
+    font-size: 1.8rem;
+  }
+}
