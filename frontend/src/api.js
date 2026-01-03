@@ -80,3 +80,4 @@ export const getStandaloneCourses = async () => {
     return [];
   }
 };
+
