@@ -49,13 +49,14 @@ router.post("/", async (req, res) => {
   }
 });
 
+// ✅ NEW: Add this GET route to fetch all users for the dashboard
 router.get("/", async (req, res) => {
   try {
-    const users = await Signup.find({}); // Queries the 'signups' collection
-    res.status(200).json(users);
+    const users = await Signup.find({}).sort({ createdAt: -1 }); // Fetch all from 'signups'
+    res.status(200).json(users); 
   } catch (err) {
+    console.error("❌ Error fetching signups:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
-
 export default router;
