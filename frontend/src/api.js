@@ -1,20 +1,29 @@
 // src/api.js
 import axios from "axios";
 
-// 1. Correctly define the isLocal check first
+// 1. Define the environment check
 const isLocal = window.location.hostname === "localhost";
 
-// 2. Use isLocal to set the baseURL
+// 2. Clean URL construction to avoid double "/api/api"
+const getBaseURL = () => {
+  if (isLocal) return "http://localhost:5001/api";
+  
+  // Get the base URL from env or fallback to Render
+  const envURL = process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com";
+  
+  // Ensure we don't double up if the env variable already includes /api
+  return envURL.endsWith("/api") ? envURL : `${envURL}/api`;
+};
+
 const API = axios.create({
-  // Backend port is 5001 as defined in your index.js
-  baseURL: isLocal
-    ? "http://localhost:5001/api"
-    : (process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com") +
-      "/api",
+  baseURL: getBaseURL(),
 });
+
+/* --- API Functions --- */
 
 export const saveStudent = async (studentData) => {
   try {
+    // Hits /api/students
     const response = await API.post("/students", studentData);
     return response.data;
   } catch (error) {
@@ -23,22 +32,22 @@ export const saveStudent = async (studentData) => {
   }
 };
 
-// Update this to fetch from /signup, which maps to your 'signups' collection
 export const getStudents = async () => {
   try {
-    const response = await API.get("/signup"); // Maps to app.use("/api/signup", signupRoutes)
-    return response.data;
+    // Hits /api/signup
+    const response = await API.get("/signup"); 
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Error fetching students:", error);
     return [];
   }
 };
+
 export const getCounsellings = async () => {
   try {
+    // Hits /api/counselling
     const response = await API.get("/counselling");
-    /** * FIXED: Your backend sends { success: true, data: [...] }
-     * We must access response.data.data
-     */
+    // Access response.data.data per your controller structure
     if (response.data && Array.isArray(response.data.data)) {
       return response.data.data;
     }
@@ -49,9 +58,9 @@ export const getCounsellings = async () => {
   }
 };
 
-// Fetch all registered universities
 export const getUniversities = async () => {
   try {
+    // Hits /api/universities
     const response = await API.get("/universities");
     return response.data; // Expected { success: true, data: [...] }
   } catch (error) {
@@ -60,9 +69,9 @@ export const getUniversities = async () => {
   }
 };
 
-// Update university administrative status (Approve/Hold/Block)
 export const updateUniversityStatus = async (id, status) => {
   try {
+    // Hits /api/universities/status/:id
     const response = await API.patch(`/universities/status/${id}`, { status });
     return response.data;
   } catch (error) {
@@ -73,11 +82,11 @@ export const updateUniversityStatus = async (id, status) => {
 
 export const getStandaloneCourses = async () => {
   try {
-    const response = await API.get("/courses"); // Hits router.get("/", getCourses)
+    // Hits /api/courses
+    const response = await API.get("/courses");
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Error fetching standalone courses:", error);
     return [];
   }
 };
-
