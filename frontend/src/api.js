@@ -1,24 +1,35 @@
 // src/api.js
 import axios from "axios";
 
-// 1. Define the environment check
 const isLocal = window.location.hostname === "localhost";
 
-// 2. Clean URL construction to avoid double "/api/api"
 const getBaseURL = () => {
-  if (isLocal) return "http://localhost:5001/api";
+  if (isLocal) return "http://localhost:5001/api"; // Matches index.js port
   
-  // Get the base URL from env or fallback to Render
-  const envURL = process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com";
+  // Cleanly handle the environment variable to prevent /api/api
+  let envURL = process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com";
+  envURL = envURL.replace(/\/$/, ""); // Remove trailing slash
   
-  // Ensure we don't double up if the env variable already includes /api
+  // If the variable doesn't have /api, add it
   return envURL.endsWith("/api") ? envURL : `${envURL}/api`;
 };
 
 const API = axios.create({
-  baseURL: getBaseURL(),
+  baseURL: getBaseURL()
 });
 
+/* --- Updated Fetch Functions --- */
+
+export const getStudents = async () => {
+  try {
+    const response = await API.get("/signup"); // Hits /api/signup
+    // signup.js returns the array directly
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error fetching signups:", error);
+    return []; // Returns empty array on 404, causing "0" in dashboard
+  }
+};
 /* --- API Functions --- */
 
 export const saveStudent = async (studentData) => {
@@ -29,17 +40,6 @@ export const saveStudent = async (studentData) => {
   } catch (error) {
     console.error("Error saving student:", error);
     throw error;
-  }
-};
-
-export const getStudents = async () => {
-  try {
-    const response = await API.get("/signup"); //
-    // If the backend returns an array directly, return it.
-    return Array.isArray(response.data) ? response.data : [];
-  } catch (error) {
-    console.error("Error fetching students:", error);
-    return [];
   }
 };
 
