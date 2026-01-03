@@ -7,30 +7,54 @@ const router = express.Router();
 // CREATE user after Firebase signup
 router.post("/", async (req, res) => {
   try {
-    const { name, email, phone, firebaseId } = req.body;
+    const { name, phone, email, password, address, pincode, firebaseId } =
+      req.body;
 
-    if (!firebaseId || !email) {
-      return res.status(400).json({ message: "firebaseId and email required" });
+    if (!name || !phone || !email) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing required fields" });
     }
 
-    let user = await Signup.findOne({ firebaseId });
-
-    if (!user) {
-      user = await Signup.create({
-        name,
-        email,
-        phone,
-        firebaseId,
-      });
-      console.log("✅ User created in MongoDB:", firebaseId);
-    } else {
-      console.log("ℹ️ User already exists:", firebaseId);
+    const existing = await Signup.findOne({ email });
+    if (existing) {
+      return res
+        .status(409)
+        .json({ success: false, error: "Email already exists" });
     }
 
-    res.status(200).json(user);
+    let hashedPassword = "";
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    const newUser = new Signup({
+      name,
+      phone,
+      email,
+      password: hashedPassword,
+      firebaseId,
+      address,
+      pincode,
+    });
+
+    await newUser.save();
+
+    res
+      .status(201)
+      .json({ success: true, message: "Signup successful", user: newUser });
   } catch (err) {
     console.error("❌ Signup save error:", err.message);
     res.status(500).json({ message: "Signup failed" });
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const users = await Signup.find({}); // Queries the 'signups' collection
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
