@@ -34,8 +34,8 @@ export const saveStudent = async (studentData) => {
 
 export const getStudents = async () => {
   try {
-    // Hits /api/signup
-    const response = await API.get("/signup"); 
+    const response = await API.get("/signup"); //
+    // If the backend returns an array directly, return it.
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Error fetching students:", error);
