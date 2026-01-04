@@ -61,8 +61,9 @@ const universityRegistrationSchema = new mongoose.Schema({
   type: String,
   year: String,
   ownership: String,
-  accreditation: String,
-  affiliation: String,
+  // ✅ FIXED: Updated to arrays to match frontend (selectedAccreditations/selectedAffiliations)
+  accreditations: [String],  // e.g., ["NAAC A++", "UGC"]
+  affiliations: [String],    // e.g., ["AICTE", "University Grants Commission"]
   students: String,
   faculty: String,
 

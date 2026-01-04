@@ -5,7 +5,6 @@ import UniversityRegistration from "../models/University.js";  // ✅ Single: Un
 import { uploadCoursesExcel } from "../controllers/uploadController.js";
 import multer from "multer";  // For Excel disk storage
 import path from "path";
-import upload from "../middlewares/multer.js";
 import { universityUpload } from "../middlewares/universityUpload.js";
 
 // ✅ NEW: Shared Cloudinary uploader
@@ -92,6 +91,10 @@ router.post(
   ),
   async (req, res) => {
     try {
+      // ✅ TEMPORARY DEBUG LOGS (REMOVE AFTER FIXING)
+      console.log("✅ BODY:", req.body);
+      console.log("✅ FILES:", req.files);
+
       // text fields
       const uniData = { ...req.body };
 
