@@ -1,3 +1,4 @@
+// Updated: frontend/src/Pages/UniversityRegister.jsx
 import React, { useState } from "react";
 import "./UniversityRegister.css";
 
@@ -223,9 +224,25 @@ export default function MultiStepForm() {
         payload.append("affiliations", JSON.stringify(selectedAffiliations));
       }
 
-      // File fields
+      // ✅ Only files allowed in POST /api/universities
+      const ALLOWED_MAIN_FILES = [
+        "logo",
+        "bannerImage",
+        "aboutImages",
+        "accreditationDoc",
+        "affiliationDoc",
+        "registrationDoc",
+        "videos",
+        "infraPhotos",
+        "eventPhotos",
+        "galleryImages",
+        "recruitersLogos",
+      ];
+
       Object.entries(files).forEach(([key, fileList]) => {
+        if (!ALLOWED_MAIN_FILES.includes(key)) return;
         if (!fileList) return;
+
         if (Array.isArray(fileList)) {
           fileList.forEach((f) => payload.append(key, f));
         } else {
@@ -238,7 +255,7 @@ export default function MultiStepForm() {
       // -----------------------------
       const baseUrl = "https://acvora-07fo.onrender.com";
 
-      const res = await fetch(`${baseUrl}/api/university-registration`, {
+      const res = await fetch(`${baseUrl}/api/universities`, {
         method: "POST",
         body: payload,
       });
@@ -323,11 +340,10 @@ export default function MultiStepForm() {
         files.eventPhotos?.forEach((f) => fd.append("eventPhotos", f));
         files.galleryImages?.forEach((f) => fd.append("galleryImages", f));
         await uploadFile(
-  `${baseUrl}/api/universities/${instituteId}/gallery/upload`,
-  fd,
-  "Gallery"
-);
-
+          `${baseUrl}/api/universities/${instituteId}/gallery/upload`,
+          fd,
+          "Gallery"
+        );
       }
 
       if (files.recruitersLogos?.length) {
@@ -918,7 +934,7 @@ export default function MultiStepForm() {
         </form>
       </main>
 
-      <style jsx>{`
+      <style>{`
         .acc-aff-row {
           grid-column: span 3;
           display: flex;

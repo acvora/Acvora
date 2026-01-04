@@ -1,3 +1,4 @@
+// Updated: backend/routes/university.js
 // backend/routes/university.js
 import express from "express";
 import UniversityRegistration from "../models/University.js";  // ✅ Single: UniversityRegistration
@@ -94,6 +95,39 @@ router.post(
       // text fields
       const uniData = { ...req.body };
 
+      // ✅ Parse JSON fields safely
+      const jsonFields = [
+        "facilities",
+        "branches",
+        "accreditations",
+        "affiliations",
+        "topRecruiters",
+        "popularCourses",
+        "scholarships",
+      ];
+
+      jsonFields.forEach((field) => {
+        if (typeof uniData[field] === "string") {
+          try {
+            uniData[field] = JSON.parse(uniData[field]);
+          } catch (e) {
+            console.warn(`⚠️ Failed to parse ${field}`, uniData[field]);
+          }
+        }
+      });
+
+      // ✅ Convert CSV strings to arrays
+      const csvFields = ["topRecruiters", "popularCourses", "scholarships"];
+
+      csvFields.forEach((field) => {
+        if (typeof uniData[field] === "string") {
+          uniData[field] = uniData[field]
+            .split(",")
+            .map((v) => v.trim())
+            .filter(Boolean);
+        }
+      });
+
       // handle file fields (Cloudinary URLs guaranteed)
       const fileFields = [
         "logo",
@@ -122,7 +156,11 @@ router.post(
       const newUni = await UniversityRegistration.create(uniData);  // ✅ Uses UniversityRegistration
       res.json({ success: true, data: newUni });
     } catch (err) {
-      res.status(500).json({ success: false, error: err.message });
+      console.error("🔥 UNIVERSITY CREATE ERROR:", err);
+      res.status(500).json({
+        success: false,
+        error: err.message,
+      });
     }
   }
 );
