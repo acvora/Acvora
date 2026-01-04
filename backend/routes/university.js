@@ -4,7 +4,8 @@ import UniversityRegistration from "../models/University.js";  // ✅ Single: Un
 import { uploadCoursesExcel } from "../controllers/uploadController.js";
 import multer from "multer";  // For Excel disk storage
 import path from "path";
-import { universityUpload } from "../middlewares/universityUpload.js";  // ✅ NEW: Shared Cloudinary uploader
+import upload from "../middlewares/multer.js";
+// ✅ NEW: Shared Cloudinary uploader
 
 const router = express.Router();
 
