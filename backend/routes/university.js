@@ -5,6 +5,8 @@ import { uploadCoursesExcel } from "../controllers/uploadController.js";
 import multer from "multer";  // For Excel disk storage
 import path from "path";
 import upload from "../middlewares/multer.js";
+import { universityUpload } from "../middlewares/universityUpload.js";
+
 // ✅ NEW: Shared Cloudinary uploader
 
 const router = express.Router();
@@ -20,7 +22,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const excelUpload = multer({ storage });
 
 // ✅ Get all universities
 router.get("/", async (req, res) => {
@@ -65,7 +67,7 @@ router.get("/:id/gallery", async (req, res) => {
 // Form field name must be: "file"
 router.post(
   "/:universityId/courses/upload",
-  upload.single("file"),
+  excelUpload.single("file"),
   uploadCoursesExcel
 );
 
