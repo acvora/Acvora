@@ -18,6 +18,7 @@ import Contact from "./Pages/Contact";
 import Home from "./Pages/Home";
 import ExploreCollegesPage from "./Pages/ExploreCollegesPage";
 import Scholarship from "./Pages/Scholarship";
+import ScholarshipDetail from "./Pages/ScholarshipDetail"; // ✅ New import for detail page
 import ExploreCoursePage from "./Pages/ExploreCoursesPage";
 import MySavedCourses from "./Pages/MySavedCourses"; // ✅ New import
 import Companion from "./FooterPages/Companion";
@@ -67,7 +68,8 @@ function App() {
         <Route path="/passwordreset" element={<PasswordReset />} />
         <Route path="/explorecollegespage" element={<ExploreCollegesPage />} />
         <Route path="/universityDetails" element={<UniversityDetails />} />
-        <Route path="/scholarship" element={<Scholarship />} />
+        <Route path="/scholarship" element={<Scholarship />} /> {/* ✅ Scholarship list route */}
+        <Route path="/scholarship/:id" element={<ScholarshipDetail />} /> {/* ✅ New detail route */}
         <Route path="/courses" element={<ExploreCoursePage />} />
         <Route path="/companion" element={<Companion />} />
         <Route path="/adminlogin" element={<AdminLogin />} />
