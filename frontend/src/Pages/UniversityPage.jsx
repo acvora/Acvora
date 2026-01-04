@@ -64,7 +64,7 @@ function UniversityPage() {
     document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // Fetch university data
+  // Fetch university data (FIXED: data?.data || data)
   useEffect(() => {
     const fetchUniversity = async () => {
       try {
@@ -72,7 +72,7 @@ function UniversityPage() {
         const res = await fetch(`${API_BASE}/api/universities/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || "Failed to fetch university data");
-        setUniversity(data?.uni || data);
+        setUniversity(data?.data || data);  // ✅ Fixed: Handles {data: uni} or raw uni
         setStatus("ready");
       } catch (e) {
         setError(e.message);
@@ -82,11 +82,13 @@ function UniversityPage() {
     fetchUniversity();
   }, [id]);
 
-  // Banner sources (deduplicate and filter)
+  // Banner sources (FIXED: Pull from gallery.infraPhotos, etc. + dedupe/filter)
   const bannerSources = [
     ...(university?.bannerImage || []),
     ...(university?.photos || []),
-    ...(university?.galleryImages || []),
+    ...(university?.gallery?.infraPhotos || []),
+    ...(university?.gallery?.eventPhotos || []),
+    ...(university?.gallery?.otherPhotos || [])
   ].filter((url, index, self) => url && self.indexOf(url) === index);
 
   // Banner auto-slide

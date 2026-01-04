@@ -8,8 +8,7 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
-import University from "./models/University.js";
-
+import UniversityRegistration from "./models/University.js";  // ✅ Single import: UniversityRegistration
 
 // Routes
 import cutoffRoutes from "./routes/cutoffRoutes.js";
@@ -37,11 +36,11 @@ import adminScholarRoutes from "./routes/adminScholarRoutes.js";
 dotenv.config();
 const app = express();
 
-/* ------------------------ Cloudinary config ------------------------ */
+/* ------------------------ Cloudinary config (FIXED: Use CLOUDINARY_ prefix) ------------------------ */
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 /* ------------------------ CORS (UPDATED - FIX 2) ------------------------ */
@@ -100,7 +99,7 @@ if (!fs.existsSync("uploads")) {
 // ✅ Serve uploaded files publicly (e.g. course images)
 app.use("/uploads", express.static("uploads"));
 
-/* ------------------------ Multer + Cloudinary ------------------------ */
+/* ------------------------ Multer + Cloudinary (Updated to match .env) ------------------------ */
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async () => ({
@@ -194,156 +193,7 @@ const studentSchema = new mongoose.Schema({
 });
 const Student = mongoose.model("Student", studentSchema);
 
-/* ------------------------ Routes (inline) ------------------------ */
-app.post("/register", async (req, res) => {
-  try {
-    const { name, mobileNumber, location } = req.body || {};
-    if (!name || !mobileNumber || !location) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required (name, mobileNumber, location)",
-      });
-    }
-
-    const reg = new Registration({ name, mobileNumber, location });
-    await reg.save();
-    return res
-      .status(201)
-      .json({ success: true, message: "Registration successful", reg });
-  } catch (err) {
-    console.error("Error in /register:", err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Registration failed", error: err.message });
-  }
-});
-
-app.post("/api/university-registration", upload.any(), async (req, res) => {
-  try {
-    console.log("📥 Incoming body:", req.body);
-    console.log("📂 Incoming files:", req.files?.map(f => ({ field: f.fieldname, url: f.path })));
-
-    if (req.body.facilities) {
-      try { req.body.facilities = JSON.parse(req.body.facilities); }
-      catch { req.body.facilities = []; }
-    }
-    if (req.body.branches) {
-      try { req.body.branches = JSON.parse(req.body.branches); }
-      catch { req.body.branches = []; }
-    }
-
-    const getFiles = (field) =>
-      req.files?.filter((f) => f.fieldname === field).map((f) => f.path) || [];
-
-    const newUniversity = new UniversityRegistration({
-      ...req.body,
-      logo: getFiles("logo"),
-      bannerImage: getFiles("bannerImage"),
-      aboutImages: getFiles("aboutImages"),
-      accreditationDoc: getFiles("accreditationDoc"),
-      affiliationDoc: getFiles("affiliationDoc"),
-      registrationDoc: getFiles("registrationDoc"),
-      videos: getFiles("videos"),
-      photos: getFiles("photos"),
-      recruitersLogos: getFiles("recruitersLogos"),
-      gallery: {
-        infraPhotos: getFiles("infraPhotos"),
-        eventPhotos: getFiles("eventPhotos"),
-        otherPhotos: getFiles("galleryImages"),
-      },
-    });
-
-    await newUniversity.save();
-
-    res.status(201).json({
-      success: true,
-      data: newUniversity,
-    });
-  } catch (err) {
-    console.error("❌ Error registering university:", err);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-});
-
-app.post("/api/news", upload.single("image"), async (req, res) => {
-  try {
-    const { title, description, category, date, universityId } = req.body;
-
-    if (!title || !description || !universityId) {
-      return res.status(400).json({ success: false, message: "Title, description and universityId are required" });
-    }
-
-    const newNews = new News({
-      universityId,
-      title,
-      description,
-      category,
-      date: date || new Date(),
-      image: req.file?.path || ""
-    });
-
-    await newNews.save();
-    res.status(201).json({ success: true, message: "News added successfully", news: newNews });
-  } catch (err) {
-    console.error("❌ Error adding news:", err);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-});
-
-app.get("/api/universities/:id/news", async (req, res) => {
-  try {
-    const uniNews = await News.find({ universityId: req.params.id }).sort({ date: -1 });
-    res.json({ success: true, news: uniNews });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-app.delete("/api/news/:id", async (req, res) => {
-  try {
-    const deleted = await News.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ success: false, message: "News not found" });
-    res.json({ success: true, message: "News deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-app.get("/api/universities/:id", async (req, res) => {
-  try {
-    const uni = await UniversityRegistration.findById(req.params.id);
-    if (!uni) {
-      return res.status(404).json({ success: false, message: "University not found" });
-    }
-    res.json(uni);
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.put("/api/universities/:id", async (req, res) => {
-  try {
-    const updated = await UniversityRegistration.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) {
-      return res.status(404).json({ success: false, message: "University not found" });
-    }
-    res.json({ success: true, data: updated });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.delete("/api/universities/:id", async (req, res) => {
-  try {
-    const deleted = await UniversityRegistration.findByIdAndDelete(req.params.id);
-    if (!deleted) {
-      return res.status(404).json({ success: false, message: "University not found" });
-    }
-    res.json({ success: true, message: "University deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+/* ------------------------ REMOVED: Duplicate university routes (now in routes/university.js) ------------------------ */
 
 /* ------------------------ Student Routes ------------------------ */
 
@@ -409,7 +259,7 @@ app.put("/api/students/:id", async (req, res) => {
 app.get("/api/students", async (req, res) => {
   try {
     const students = await Student.find();
-    res.json(students);
+    res.json({ success: true, data: students });  // ✅ Standardized response
   } catch (err) {
     console.error("❌ Error fetching students:", err);
     res.status(500).json({ success: false, message: "Server error", error: err.message });
@@ -434,10 +284,10 @@ app.delete("/api/students/:id", async (req, res) => {
 app.get("/api/students/recent", async (req, res) => {
   try {
     const recent = await Student.find().sort({ createdAt: -1 }).limit(5);
-    res.json(recent);
+    res.json({ success: true, data: recent });  // ✅ Standardized
   } catch (err) {
     console.error("❌ Error fetching recent applications:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
@@ -457,14 +307,17 @@ app.get("/api/students/stats", async (req, res) => {
     const commissionEarned = confirmedAdmissions * 500;
 
     res.json({
-      applicationsThisMonth,
-      confirmedAdmissions,
-      commissionEarned,
-      pendingApplications, // 👈 renamed here
+      success: true,
+      data: {  // ✅ Wrapped in data
+        applicationsThisMonth,
+        confirmedAdmissions,
+        commissionEarned,
+        pendingApplications, // 👈 renamed here
+      },
     });
   } catch (err) {
     console.error("❌ Error fetching stats:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
@@ -488,7 +341,7 @@ app.get("/api/students/:id/pdf", async (req, res) => {
 
 /* ------------------------ Mount Routers ------------------------ */
 app.use("/api/signup", signupRoutes);
-app.use("/api/universities", universityRoutes);
+app.use("/api/universities", universityRoutes);  // ✅ Consolidated
 app.use("/api/universities", uploadCourseRoutes);
 app.use("/api/cutoff", cutoffRoutes);
 app.use("/api/admissions", admissionsRoutes);
