@@ -31,7 +31,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 /* ✅ Get university by ID */
 router.get("/:id", async (req, res) => {
   try {
@@ -97,9 +96,13 @@ router.post(
 
       // gallery special handling
       uniData.gallery = {
-        infraPhotos: req.files["infraPhotos"]?.map((f) => `/uploads/${f.filename}`) || [],
-        eventPhotos: req.files["eventPhotos"]?.map((f) => `/uploads/${f.filename}`) || [],
-        otherPhotos: req.files["galleryImages"]?.map((f) => `/uploads/${f.filename}`) || [],
+        infraPhotos:
+          req.files["infraPhotos"]?.map((f) => `/uploads/${f.filename}`) || [],
+        eventPhotos:
+          req.files["eventPhotos"]?.map((f) => `/uploads/${f.filename}`) || [],
+        otherPhotos:
+          req.files["galleryImages"]?.map((f) => `/uploads/${f.filename}`) ||
+          [],
       };
 
       const newUni = await University.create(uniData);
@@ -125,13 +128,14 @@ router.get("/:id/courses", async (req, res) => {
   }
 });
 
-
-
 // ✅ Get one university by ID
 router.get("/:id", async (req, res) => {
   try {
     const uni = await UniversityRegistration.findById(req.params.id);
-    if (!uni) return res.status(404).json({ success: false, message: "University not found" });
+    if (!uni)
+      return res
+        .status(404)
+        .json({ success: false, message: "University not found" });
     res.json({ success: true, data: uni });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -146,7 +150,10 @@ router.put("/:id", async (req, res) => {
       req.body,
       { new: true }
     );
-    if (!uni) return res.status(404).json({ success: false, message: "University not found" });
+    if (!uni)
+      return res
+        .status(404)
+        .json({ success: false, message: "University not found" });
     res.json({ success: true, data: uni });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -157,13 +164,31 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const uni = await UniversityRegistration.findByIdAndDelete(req.params.id);
-    if (!uni) return res.status(404).json({ success: false, message: "University not found" });
+    if (!uni)
+      return res
+        .status(404)
+        .json({ success: false, message: "University not found" });
     res.json({ success: true, message: "University deleted successfully" });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
+// ✅ Route for Admin Status Updates
+router.patch("/status/:id", async (req, res) => {
+  try {
+    const { status } = req.body;
+    const updatedUni = await University.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    if (!updatedUni)
+      return res.status(404).json({ success: false, message: "Not found" });
+    res.json({ success: true, data: updatedUni });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 export default router;
-
-

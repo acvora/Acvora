@@ -67,11 +67,11 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex bg-gray-900 min-h-screen text-gray-100">
+    <div className="bg-gray-900 min-h-screen pt-16 text-gray-100">
       <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-7xl mx-auto">{renderContent()}</div>
+      <main className="ml-72 p-8 overflow-y-auto h-[calc(100vh-4rem)]">
+        {renderContent()}
       </main>
     </div>
   );
