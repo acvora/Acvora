@@ -13,10 +13,9 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => ({  // ✅ Now async with (req, file) for field access
-    folder: "universities/gallery",
-    resource_type: "image",
-    public_id: `${file.fieldname}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,  // ✅ Unique: field + timestamp + random hex
+  params: async () => ({
+    folder: "universities",
+    resource_type: "auto",
   }),
 });
 
