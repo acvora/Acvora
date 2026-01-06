@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa";
 import "./Gallery.css";
 
-const API_BASE = import.meta?.env?.VITE_API_BASE || "https://acvora-07fo.onrender.com";
+const API_BASE =
+  process.env.REACT_APP_API_BASE || "https://acvora-07fo.onrender.com";
+
 
 // helper to build correct image URL
 const getImageUrl = (src) => {
