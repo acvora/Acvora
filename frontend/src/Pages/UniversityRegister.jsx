@@ -1,8 +1,10 @@
 // Updated: frontend/src/Pages/UniversityRegister.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // ✅ Added useEffect
+import { useNavigate } from "react-router-dom"; // ✅ For post-submit redirect
 import "./UniversityRegister.css";
 
 export default function MultiStepForm() {
+  const navigate = useNavigate(); // ✅ For redirect after success
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({});
   const [files, setFiles] = useState({});
@@ -13,6 +15,7 @@ export default function MultiStepForm() {
   const [loading, setLoading] = useState(false);
   const [selectedAccreditations, setSelectedAccreditations] = useState([]);
   const [selectedAffiliations, setSelectedAffiliations] = useState([]);
+  const [instituteId, setInstituteId] = useState(null); // ✅ Track created ID
 
   const totalSteps = 4;
   const stepTitles = ['Basics', 'Courses', 'Placements', 'Contact Info'];
@@ -281,9 +284,35 @@ export default function MultiStepForm() {
 
   const prev = () => setStep((s) => Math.max(1, s - 1));
 
+  // ✅ New: Fetch and normalize created uni after POST (mirrors ProfileForm)
+  const fetchAndNormalizeCreatedUni = async (id) => {
+    try {
+      const baseUrl = "https://acvora-07fo.onrender.com";
+      const res = await fetch(`${baseUrl}/api/universities/${id}`);
+      if (!res.ok) throw new Error("Failed to fetch created profile");
+
+      const data = await res.json();
+      const uni = data.data || data;
+
+      // Normalize arrays → strings (for consistency if editing immediately)
+      const normalizedFormData = {
+        ...uni,
+        accreditation: uni.accreditations?.join(", ") || "",
+        affiliation: uni.affiliations?.join(", ") || "",
+        modeOfEducation: uni.modeOfEducation?.join(", ") || "",
+        facilities: uni.facilities || [],
+      };
+
+      setFormData(normalizedFormData); // Optional: Update local state if needed
+      console.log("✅ Normalized created uni:", normalizedFormData);
+    } catch (err) {
+      console.error("❌ Error fetching created profile:", err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // ✅ Show loader
+    setLoading(true);
 
     try {
       // -----------------------------
@@ -303,23 +332,17 @@ export default function MultiStepForm() {
         payload.append("facilities", JSON.stringify(formData.facilities));
       }
 
-      // Modes
-      if (selectedModes.length > 0) {
-        payload.append("modeOfEducation", JSON.stringify(selectedModes));
-      }
+      // ✅ Modes (always append, even empty array)
+      payload.append("modeOfEducation", JSON.stringify(selectedModes || []));
 
       // Branches
       if (branches?.length) {
         payload.append("branches", JSON.stringify(branches));
       }
 
-      // Accreditations and Affiliations
-      if (selectedAccreditations.length > 0) {
-        payload.append("accreditations", JSON.stringify(selectedAccreditations));
-      }
-      if (selectedAffiliations.length > 0) {
-        payload.append("affiliations", JSON.stringify(selectedAffiliations));
-      }
+      // ✅ Accreditations and Affiliations (always append, even empty)
+      payload.append("accreditations", JSON.stringify(selectedAccreditations || []));
+      payload.append("affiliations", JSON.stringify(selectedAffiliations || []));
 
       // ✅ Only files allowed in POST /api/universities
       const ALLOWED_MAIN_FILES = [
@@ -371,9 +394,13 @@ export default function MultiStepForm() {
         return;
       }
 
-      // ✅ store instituteId in localStorage and variable
-      const instituteId = data.data._id;
-      localStorage.setItem("instituteId", instituteId);
+      // ✅ Store instituteId
+      const createdId = data.data._id;
+      setInstituteId(createdId);
+      localStorage.setItem("instituteId", createdId);
+
+      // ✅ Optional: Fetch and normalize (for consistency with ProfileForm)
+      await fetchAndNormalizeCreatedUni(createdId);
 
       // -----------------------------
       // 3. Helper for uploads
@@ -395,7 +422,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.file);
         await uploadFile(
-          `${baseUrl}/api/universities/${instituteId}/courses/upload`,
+          `${baseUrl}/api/universities/${createdId}/courses/upload`,
           fd,
           "Courses"
         );
@@ -405,7 +432,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.cutoffExcel);
         await uploadFile(
-          `${baseUrl}/api/cutoff/${instituteId}/cutoff/upload`,
+          `${baseUrl}/api/cutoff/${createdId}/cutoff/upload`,
           fd,
           "Cutoff"
         );
@@ -415,7 +442,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.admissionsExcel);
         await uploadFile(
-          `${baseUrl}/api/admissions/${instituteId}/admissions/upload`,
+          `${baseUrl}/api/admissions/${createdId}/admissions/upload`,
           fd,
           "Admissions"
         );
@@ -425,7 +452,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.placementsExcel);
         await uploadFile(
-          `${baseUrl}/api/universities/${instituteId}/placements/upload`,
+          `${baseUrl}/api/universities/${createdId}/placements/upload`,
           fd,
           "Placements"
         );
@@ -437,7 +464,7 @@ export default function MultiStepForm() {
         files.eventPhotos?.forEach((f) => fd.append("eventPhotos", f));
         files.galleryImages?.forEach((f) => fd.append("galleryImages", f));
         await uploadFile(
-          `${baseUrl}/api/universities/${instituteId}/gallery/upload`,
+          `${baseUrl}/api/universities/${createdId}/gallery/upload`,
           fd,
           "Gallery"
         );
@@ -447,21 +474,24 @@ export default function MultiStepForm() {
         const fd = new FormData();
         files.recruitersLogos.forEach((f) => fd.append("recruitersLogos", f));
         await uploadFile(
-          `${baseUrl}/api/recruiters/${instituteId}/recruiters/upload`,
+          `${baseUrl}/api/recruiters/${createdId}/recruiters/upload`,
           fd,
           "Recruiters logos"
         );
       }
 
       // -----------------------------
-      // 5. Success
+      // 5. Success & Redirect
       // -----------------------------
       alert("🎉 Institute Registered Successfully!");
+      
+      // ✅ Optional: Redirect to profile for immediate editing
+      // navigate(`/profile/${createdId}`); // Uncomment to auto-redirect
     } catch (err) {
       console.error("❌ Error submitting form:", err);
       alert("❌ Form submission failed!");
     } finally {
-      setLoading(false); // ✅ Hide loader
+      setLoading(false);
     }
   };
 
@@ -834,7 +864,7 @@ export default function MultiStepForm() {
                   onChange={handleFileChange}
                 />
               </div>
-              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}> {/* Reduced minHeight from 300px */}
+              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}>
                 <h4>Branch-wise Placements</h4>
                 <button
                   type="button"
@@ -898,7 +928,7 @@ export default function MultiStepForm() {
                   </div>
                 ))}
               </div>
-              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}> {/* Reduced minHeight from 300px */}
+              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}>
                 <h4>Facilities</h4>
                 <div className="selected-tags">
                   {selectedFacilities.map((fac, index) => (
@@ -945,7 +975,7 @@ export default function MultiStepForm() {
                     />
                   </div>
                 </div>
-                <div style={{ maxHeight: '180px', overflowY: 'auto', marginTop: '0.5rem' }}> {/* Reduced maxHeight from 200px and marginTop */}
+                <div style={{ maxHeight: '180px', overflowY: 'auto', marginTop: '0.5rem' }}>
                   {selectedFacilities.map((fac, index) => (
                     <div key={index} className="facility-desc-group">
                       <label>Description for {fac.charAt(0).toUpperCase() + fac.slice(1)}</label>
@@ -964,7 +994,7 @@ export default function MultiStepForm() {
                   ))}
                 </div>
               </div>
-              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}> {/* Reduced minHeight from 300px */}
+              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}>
                 <h4>Gallery Uploads</h4>
                 <label>Upload Infrastructure Photos</label>
                 <input
