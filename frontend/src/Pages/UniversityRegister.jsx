@@ -7,13 +7,35 @@ export default function MultiStepForm() {
   const [formData, setFormData] = useState({});
   const [files, setFiles] = useState({});
   const [selectedFacilities, setSelectedFacilities] = useState([]);
+  const [selectedModes, setSelectedModes] = useState([]);
   const [branches, setBranches] = useState([]);
   const [expandedBranches, setExpandedBranches] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedAccreditations, setSelectedAccreditations] = useState([]);
   const [selectedAffiliations, setSelectedAffiliations] = useState([]);
 
-  const totalSteps = 3;
+  const totalSteps = 4;
+  const stepTitles = ['Basics', 'Courses', 'Placements', 'Contact Info'];
+
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
+
+  const modes = ["Full Time", "Part Time", "Online", "Distance Learning", "Hybrid"];
+
+  const facilityOptions = [
+    "hostel",
+    "library",
+    "labs",
+    "researchCenters",
+    "sports",
+    "cafeteria",
+    "auditorium",
+    "medical",
+    "transport",
+    "itFacilities",
+    "placementCell",
+    "internshipTieups",
+  ];
 
   const accreditations = [
     "NAAC – National Assessment and Accreditation Council",
@@ -46,7 +68,8 @@ export default function MultiStepForm() {
     "WES / IQAS Recognized",
     "QAA – UK Quality Assurance Agency",
     "TESQA – Australia",
-    "EduTrust Singapore"
+    "EduTrust Singapore",
+    "UGC Recognized"
   ];
 
   const affiliations = [
@@ -82,6 +105,13 @@ export default function MultiStepForm() {
     "Skill India / PMKVY Training Partner"
   ];
 
+  const quickAccreditations = [
+  ];
+
+  const quickAffiliations = [
+  
+  ];
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     let newValue;
@@ -94,6 +124,32 @@ export default function MultiStepForm() {
       ...formData,
       [name]: newValue,
     });
+  };
+
+  const handleQuickAccreditationChange = (full, checked) => {
+    if (checked && !selectedAccreditations.includes(full)) {
+      setSelectedAccreditations([...selectedAccreditations, full]);
+    } else if (!checked) {
+      const index = selectedAccreditations.indexOf(full);
+      if (index > -1) {
+        const newList = [...selectedAccreditations];
+        newList.splice(index, 1);
+        setSelectedAccreditations(newList);
+      }
+    }
+  };
+
+  const handleQuickAffiliationChange = (full, checked) => {
+    if (checked && !selectedAffiliations.includes(full)) {
+      setSelectedAffiliations([...selectedAffiliations, full]);
+    } else if (!checked) {
+      const index = selectedAffiliations.indexOf(full);
+      if (index > -1) {
+        const newList = [...selectedAffiliations];
+        newList.splice(index, 1);
+        setSelectedAffiliations(newList);
+      }
+    }
   };
 
   const handleFileChange = (e) => {
@@ -144,24 +200,44 @@ export default function MultiStepForm() {
     setSelectedAffiliations(newList);
   };
 
-  const handleFacilityChange = (e) => {
-    const { value, checked } = e.target;
-    if (checked) {
+  const addMode = (value) => {
+    if (value && !selectedModes.includes(value)) {
+      setSelectedModes([...selectedModes, value]);
+    }
+  };
+
+  const removeMode = (index) => {
+    const newList = [...selectedModes];
+    newList.splice(index, 1);
+    setSelectedModes(newList);
+  };
+
+  const addFacility = (value) => {
+    if (value && !selectedFacilities.includes(value)) {
       setSelectedFacilities([...selectedFacilities, value]);
       setFormData((prev) => ({
         ...prev,
-        facilities: [
-          ...(prev.facilities || []),
-          { name: value, description: "" },
-        ],
-      }));
-    } else {
-      setSelectedFacilities(selectedFacilities.filter((f) => f !== value));
-      setFormData((prev) => ({
-        ...prev,
-        facilities: (prev.facilities || []).filter((f) => f.name !== value),
+        facilities: [...(prev.facilities || []), { name: value, description: "" }],
       }));
     }
+  };
+
+  const removeFacility = (index) => {
+    const nameToRemove = selectedFacilities[index];
+    setSelectedFacilities(selectedFacilities.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      facilities: (prev.facilities || []).filter((f) => f.name !== nameToRemove),
+    }));
+  };
+
+  const updateFacilityDesc = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      facilities: (prev.facilities || []).map((f) =>
+        f.name === name ? { ...f, description: value } : f
+      ),
+    }));
   };
 
   const addBranch = () => {
@@ -225,6 +301,11 @@ export default function MultiStepForm() {
       // Facilities (stringify array)
       if (formData.facilities?.length) {
         payload.append("facilities", JSON.stringify(formData.facilities));
+      }
+
+      // Modes
+      if (selectedModes.length > 0) {
+        payload.append("modeOfEducation", JSON.stringify(selectedModes));
       }
 
       // Branches
@@ -384,27 +465,18 @@ export default function MultiStepForm() {
     }
   };
 
-  const facilityOptions = [
-    "hostel",
-    "library",
-    "labs",
-    "researchCenters",
-    "sports",
-    "cafeteria",
-    "auditorium",
-    "medical",
-    "transport",
-    "itFacilities",
-    "placementCell",
-    "internshipTieups",
-  ];
-
   const getShortName = (fullName) => {
     const parts = fullName.split(' – ');
     return parts[0] || fullName;
   };
 
   const isExpanded = (index) => expandedBranches.includes(index);
+
+  const saveDraft = () => {
+    // Save to localStorage or API - placeholder
+    console.log('Saving draft...', formData, files, selectedAccreditations, selectedAffiliations);
+    alert('Saved as draft!');
+  };
 
   return (
     <div className="univ-app-container">
@@ -416,20 +488,27 @@ export default function MultiStepForm() {
       )}
      
       <header className="univ-header">
-        <h1 className="univ-header-title">Institute Registration</h1>
-        <p className="univ-header-subtitle">Complete the multi-step registration to showcase your institute</p>
+        <h1 className="univ-header-title">Institute Registration Form</h1>
+        <p className="univ-header-subtitle">Register Your Institute with Us</p>
+        <a href="#" className="help-btn" onClick={(e) => { e.preventDefault(); alert('Contact support at support@example.com'); }}>Need Help? Contact Support</a>
       </header>
 
       <main className="univ-main-container">
+        <div className="step-indicator">
+          <span className="step-current">Step {step} of {totalSteps}</span>
+          {stepTitles.slice(step).map((title, i) => (
+            <span key={i} className="step-next"> → {title}</span>
+          ))}
+        </div>
         <form
           className="univ-multi-step-form wide-form"
           onSubmit={handleSubmit}
         >
           {step === 1 && (
-            <div className="univ-form-step grid-3">
-              <h3>Step 1: Institute Basics, Hero/About & Contact/Campus Info</h3>
-              <div className="field-group">
-                <h4>Basic Information</h4>
+            <div className="univ-form-step step1-layout">
+              <h3>Step 1: {stepTitles[0]}</h3>
+              <div className="field-group basic-section">
+                <h4>Basic Institute Details</h4>
                 <input
                   name="instituteName"
                   placeholder="Institute Name"
@@ -446,12 +525,18 @@ export default function MultiStepForm() {
                   <option>College</option>
                   <option>Institute</option>
                 </select>
-                <input
+                <select
                   name="year"
-                  placeholder="Establishment Year"
                   onChange={handleChange}
                   title="Year the institute was established, e.g., 1998. Shown in hero."
-                />
+                >
+                  <option value="">Select Year</option>
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
                 <select
                   name="ownership"
                   onChange={handleChange}
@@ -475,26 +560,47 @@ export default function MultiStepForm() {
                   onChange={handleChange}
                   title="Total faculty count. Hero section."
                 />
+                <label>Upload Logo / Photo</label>
+                <input
+                  type="file"
+                  name="logo"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+                <span className="file-hint">Max size 2MB, JPG/PNG</span>
               </div>
-              <div className="field-group">
+              <div className="field-group acc-section">
                 <h4>Accreditations & Affiliations</h4>
-                <div className="acc-aff-row">
-                  <div className="accreditation-section">
+                <div className="quick-section">
+                  <div className="quick-label">Quick Accreditations</div>
+                  <div className="checkbox-row">
+                    {quickAccreditations.map(({ short, full }) => (
+                      <label key={short} className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={selectedAccreditations.includes(full)}
+                          onChange={(e) => handleQuickAccreditationChange(full, e.target.checked)}
+                        />
+                        {short}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="selected-tags">
+                    {selectedAccreditations.map((acc, index) => (
+                      <span key={index} className="tag">
+                        {getShortName(acc)}
+                        <button
+                          type="button"
+                          onClick={() => removeAccreditation(index)}
+                          className="remove-tag"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="affiliated-with">
                     <label>Accreditations</label>
-                    <div className="selected-tags">
-                      {selectedAccreditations.map((acc, index) => (
-                        <span key={index} className="tag">
-                          {getShortName(acc)}
-                          <button
-                            type="button"
-                            onClick={() => removeAccreditation(index)}
-                            className="remove-tag"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                     <select
                       onChange={(e) => {
                         if (e.target.value) {
@@ -512,22 +618,37 @@ export default function MultiStepForm() {
                       ))}
                     </select>
                   </div>
-                  <div className="affiliation-section">
+                </div>
+                <div className="quick-section">
+                  <div className="quick-label">Quick Affiliations</div>
+                  <div className="checkbox-row">
+                    {quickAffiliations.map(({ short, full }) => (
+                      <label key={short} className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          checked={selectedAffiliations.includes(full)}
+                          onChange={(e) => handleQuickAffiliationChange(full, e.target.checked)}
+                        />
+                        {short}
+                      </label>
+                    ))}
+                  </div>
+                  <div className="selected-tags">
+                    {selectedAffiliations.map((aff, index) => (
+                      <span key={index} className="tag">
+                        {getShortName(aff)}
+                        <button
+                          type="button"
+                          onClick={() => removeAffiliation(index)}
+                          className="remove-tag"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                  <div className="affiliated-with">
                     <label>Affiliations</label>
-                    <div className="selected-tags">
-                      {selectedAffiliations.map((aff, index) => (
-                        <span key={index} className="tag">
-                          {getShortName(aff)}
-                          <button
-                            type="button"
-                            onClick={() => removeAffiliation(index)}
-                            className="remove-tag"
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))}
-                    </div>
                     <select
                       onChange={(e) => {
                         if (e.target.value) {
@@ -547,15 +668,44 @@ export default function MultiStepForm() {
                   </div>
                 </div>
               </div>
-              <div className="field-group">
+              <div className="field-group mode-section">
+                <h4>Mode of Education</h4>
+                <div className="selected-tags">
+                  {selectedModes.map((mode, index) => (
+                    <span key={index} className="tag">
+                      {mode}
+                      <button
+                        type="button"
+                        onClick={() => removeMode(index)}
+                        className="remove-tag"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="affiliated-with">
+                  <label>Mode of Education</label>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        addMode(e.target.value);
+                        e.target.value = "";
+                      }
+                    }}
+                    defaultValue=""
+                  >
+                    <option value="">Select from list</option>
+                    {modes.map((mode) => (
+                      <option key={mode} value={mode}>
+                        {mode}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="field-group visual-section">
                 <h4>Visual Assets</h4>
-                <label>Upload Logo</label>
-                <input
-                  type="file"
-                  name="logo"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
                 <label>Upload Banner Images (at least 3)</label>
                 <input
                   type="file"
@@ -573,58 +723,7 @@ export default function MultiStepForm() {
                   title="Upload at least 5 images for the about section (e.g., campus views)."
                 />
               </div>
-              <div className="field-group">
-                <h4>Campus & Contact Info</h4>
-                <input
-                  name="address"
-                  placeholder="Campus Address"
-                  onChange={handleChange}
-                  title="Full campus address. Used in info section."
-                />
-                <select
-                  name="state"
-                  onChange={handleChange}
-                  title="Select state. Part of location in info."
-                >
-                  <option value="">Select State</option>
-                  <option>Maharashtra</option>
-                  <option>Karnataka</option>
-                  <option>Delhi</option>
-                  <option>Tamil Nadu</option>
-                  <option>Uttar Pradesh</option>
-                </select>
-                <input
-                  name="city"
-                  placeholder="City (e.g., Gurgaon)"
-                  onChange={handleChange}
-                  title="City name. Displayed in hero and info."
-                />
-                <input
-                  name="email"
-                  placeholder="Email"
-                  onChange={handleChange}
-                  title="Contact email."
-                />
-                <input
-                  name="phone"
-                  placeholder="Phone"
-                  onChange={handleChange}
-                  title="Contact phone number."
-                />
-                <input
-                  name="website"
-                  placeholder="Website"
-                  onChange={handleChange}
-                  title="Institute website URL."
-                />
-                <input
-                  name="socialMedia"
-                  placeholder="Social Media Links (comma-separated)"
-                  onChange={handleChange}
-                  title="List social media links, separated by commas."
-                />
-              </div>
-              <div className="field-group">
+              <div className="field-group placements-section">
                 <h4>Placements & Campus Details</h4>
                 <input
                   name="topRecruiters"
@@ -669,7 +768,7 @@ export default function MultiStepForm() {
                   title="NIRF ranking."
                 />
               </div>
-              <div className="field-group">
+              <div className="field-group about-section">
                 <h4>About Description</h4>
                 <textarea
                   name="description"
@@ -683,8 +782,8 @@ export default function MultiStepForm() {
           )}
 
           {step === 2 && (
-            <div className="univ-form-step grid-3">
-              <h3>Step 2: Academics, Placements & Facilities/Gallery</h3>
+            <div className="univ-form-step step1-layout">
+              <h3>Step 2: {stepTitles[1]}</h3>
               <div className="field-group">
                 <h4>Academic Data Uploads</h4>
                 <label>Upload Courses & Fees Excel (courses.xlsx)</label>
@@ -703,13 +802,13 @@ export default function MultiStepForm() {
                   accept=".xlsx"
                   title="Upload Excel file with columns: Courses, Open, General, EWS, OBC, SC, ST, PWD."
                 />
-                <input
-                  name="popularCourses"
-                  placeholder="Popular Courses (comma-separated)"
-                  onChange={handleChange}
-                  title="List popular courses for info section."
-                />
               </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="univ-form-step step1-layout">
+              <h3>Step 3: {stepTitles[2]}</h3>
               <div className="field-group">
                 <h4>Placements Data</h4>
                 <input
@@ -801,44 +900,64 @@ export default function MultiStepForm() {
               </div>
               <div className="field-group" style={{ height: 'auto', minHeight: '300px' }}>
                 <h4>Facilities</h4>
-                <p style={{ marginBottom: '0.75rem', fontSize: '0.8125rem', color: '#4a5568' }}>Select facilities</p>
-                <div className="facilities-grid">
-                  {facilityOptions.map((fac) => (
-                    <label key={fac} className={`univ-checkbox-label ${selectedFacilities.includes(fac) ? 'checked' : ''}`}>
-                      <input
-                        type="checkbox"
-                        value={fac}
-                        checked={selectedFacilities.includes(fac)}
-                        onChange={handleFacilityChange}
-                      />
-                      <span>{fac.charAt(0).toUpperCase() + fac.slice(1)}</span>
-                    </label>
+                <div className="selected-tags">
+                  {selectedFacilities.map((fac, index) => (
+                    <span key={index} className="tag">
+                      {fac.charAt(0).toUpperCase() + fac.slice(1)}
+                      <button
+                        type="button"
+                        onClick={() => removeFacility(index)}
+                        className="remove-tag"
+                      >
+                        ×
+                      </button>
+                    </span>
                   ))}
                 </div>
+                <div className="add-facility">
+                  <label>Add Facility</label>
+                  <div className="input-row">
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          addFacility(e.target.value);
+                          e.target.value = "";
+                        }
+                      }}
+                      defaultValue=""
+                    >
+                      <option value="">Select predefined</option>
+                      {facilityOptions.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                    <input
+                      placeholder="Or add custom facility"
+                      onBlur={(e) => {
+                        const value = e.target.value.trim();
+                        e.target.value = "";
+                        if (value && !selectedFacilities.includes(value)) {
+                          addFacility(value);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
                 <div style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '0.75rem' }}>
-                  {selectedFacilities.map((fac) => (
-                    <div key={fac} className="field-group" style={{ marginTop: '0.75rem', padding: '1rem' }}>
+                  {selectedFacilities.map((fac, index) => (
+                    <div key={index} className="facility-desc-group">
                       <label>Description for {fac.charAt(0).toUpperCase() + fac.slice(1)}</label>
                       <textarea
-                        name={`facility_${fac}_desc`}
-                        placeholder={`Description for ${
-                          fac.charAt(0).toUpperCase() + fac.slice(1)
-                        }`}
+                        placeholder={`Description for ${fac.charAt(0).toUpperCase() + fac.slice(1)}`}
                         rows={3}
                         value={
                           (formData.facilities || []).find((f) => f.name === fac)
                             ?.description || ""
                         }
                         onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            facilities: [
-                              ...(prev.facilities || []).filter(
-                                (f) => f.name !== fac
-                              ),
-                              { name: fac, description: e.target.value },
-                            ],
-                          }))
+                          updateFacilityDesc(fac, e.target.value)
                         }
                       />
                     </div>
@@ -875,9 +994,76 @@ export default function MultiStepForm() {
             </div>
           )}
 
-          {step === 3 && (
-            <div className="univ-form-step grid-3">
-              <h3>Step 3: Admissions, International, Documents & Account</h3>
+          {step === 4 && (
+            <div className="univ-form-step step1-layout">
+              <h3>Step 4: {stepTitles[3]}</h3>
+              <div className="field-group contact-section">
+                <h4>Contact Information</h4>
+                <input
+                  name="address"
+                  placeholder="Institute Address"
+                  onChange={handleChange}
+                  title="Full campus address. Used in info section."
+                />
+                <div className="input-row">
+                  <input
+                    name="city"
+                    placeholder="City"
+                    onChange={handleChange}
+                    title="City name. Displayed in hero and info."
+                  />
+                  <select
+                    name="state"
+                    onChange={handleChange}
+                    title="Select state. Part of location in info."
+                  >
+                    <option value="">Select State</option>
+                    <option>Maharashtra</option>
+                    <option>Karnataka</option>
+                    <option>Delhi</option>
+                    <option>Tamil Nadu</option>
+                    <option>Uttar Pradesh</option>
+                  </select>
+                  <input
+                    name="pinCode"
+                    placeholder="Pin Code"
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="input-row">
+                  <input
+                    name="contactPerson"
+                    placeholder="Contact Person Name"
+                    onChange={handleChange}
+                  />
+                  <input
+                    name="phone"
+                    placeholder="Contact Number"
+                    onChange={handleChange}
+                    title="Contact phone number."
+                  />
+                </div>
+                <div className="input-row">
+                  <input
+                    name="email"
+                    placeholder="Email Address"
+                    onChange={handleChange}
+                    title="Contact email."
+                  />
+                  <input
+                    name="website"
+                    placeholder="Website URL"
+                    onChange={handleChange}
+                    title="Institute website URL."
+                  />
+                </div>
+                <input
+                  name="socialMedia"
+                  placeholder="Social Media Links (comma-separated)"
+                  onChange={handleChange}
+                  title="List social media links, separated by commas."
+                />
+              </div>
               <div className="field-group">
                 <h4>Admissions Data</h4>
                 <label>Upload Admissions Excel (admissions.xlsx)</label>
@@ -1009,21 +1195,25 @@ export default function MultiStepForm() {
           )}
 
           <div className="univ-form-nav">
-            {step > 1 && step <= totalSteps && (
-              <button type="button" onClick={prev} className="univ-nav-btn">
-                ⬅ Previous
+            <button type="button" className="draft-btn" onClick={saveDraft}>
+              Save as Draft
+            </button>
+            {step > 1 && (
+              <button type="button" onClick={prev} className="prev-btn">
+                ← Previous
               </button>
             )}
-            {step < totalSteps && (
+            {step < totalSteps ? (
               <button 
                 type="button" 
                 onClick={next} 
-                className="univ-nav-btn"
-                style={{ marginLeft: 'auto' }}
+                className="next-btn"
               >
-                Next ➡
+                {step === 1 && 'Next: Courses →'}
+                {step === 2 && 'Next: Placements →'}
+                {step === 3 && 'Next: Contact info →'}
               </button>
-            )}
+            ) : null}
           </div>
         </form>
       </main>
