@@ -834,7 +834,7 @@ export default function MultiStepForm() {
                   onChange={handleFileChange}
                 />
               </div>
-              <div className="field-group" style={{ height: 'auto', minHeight: '300px' }}>
+              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}> {/* Reduced minHeight from 300px */}
                 <h4>Branch-wise Placements</h4>
                 <button
                   type="button"
@@ -898,7 +898,7 @@ export default function MultiStepForm() {
                   </div>
                 ))}
               </div>
-              <div className="field-group" style={{ height: 'auto', minHeight: '300px' }}>
+              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}> {/* Reduced minHeight from 300px */}
                 <h4>Facilities</h4>
                 <div className="selected-tags">
                   {selectedFacilities.map((fac, index) => (
@@ -945,7 +945,7 @@ export default function MultiStepForm() {
                     />
                   </div>
                 </div>
-                <div style={{ maxHeight: '200px', overflowY: 'auto', marginTop: '0.75rem' }}>
+                <div style={{ maxHeight: '180px', overflowY: 'auto', marginTop: '0.5rem' }}> {/* Reduced maxHeight from 200px and marginTop */}
                   {selectedFacilities.map((fac, index) => (
                     <div key={index} className="facility-desc-group">
                       <label>Description for {fac.charAt(0).toUpperCase() + fac.slice(1)}</label>
@@ -964,7 +964,7 @@ export default function MultiStepForm() {
                   ))}
                 </div>
               </div>
-              <div className="field-group" style={{ height: 'auto', minHeight: '300px' }}>
+              <div className="field-group" style={{ height: 'auto', minHeight: '280px' }}> {/* Reduced minHeight from 300px */}
                 <h4>Gallery Uploads</h4>
                 <label>Upload Infrastructure Photos</label>
                 <input
