@@ -1,8 +1,5 @@
 import University from "../models/University.js";
 
-// helper to normalize file path
-const normalizePath = (p) => p.replace(/\\/g, "/");
-
 // ✅ Upload Gallery
 export const uploadGallery = async (req, res) => {
   try {
@@ -13,20 +10,32 @@ export const uploadGallery = async (req, res) => {
       return res.status(404).json({ success: false, message: "University not found" });
     }
 
+    // Safety: Initialize gallery if not exists
+    if (!uni.gallery) {
+      uni.gallery = {
+        infraPhotos: [],
+        eventPhotos: [],
+        otherPhotos: [],
+      };
+    }
+
+    // Helper to get Cloudinary URL safely
+    const getFileUrl = (file) => file.secure_url || file.path || "";
+
     if (req.files.infraPhotos) {
-      uni.gallery.infraPhotos.push(
-        ...req.files.infraPhotos.map((f) => normalizePath(f.path))
-      );
+      const urls = req.files.infraPhotos.map(getFileUrl).filter(Boolean); // Filter empty
+      uni.gallery.infraPhotos.push(...urls);
+      console.log("✅ Saved infra URLs:", urls); // Debug
     }
     if (req.files.eventPhotos) {
-      uni.gallery.eventPhotos.push(
-        ...req.files.eventPhotos.map((f) => normalizePath(f.path))
-      );
+      const urls = req.files.eventPhotos.map(getFileUrl).filter(Boolean);
+      uni.gallery.eventPhotos.push(...urls);
+      console.log("✅ Saved event URLs:", urls); // Debug
     }
     if (req.files.galleryImages) {
-      uni.gallery.otherPhotos.push(
-        ...req.files.galleryImages.map((f) => normalizePath(f.path))
-      );
+      const urls = req.files.galleryImages.map(getFileUrl).filter(Boolean);
+      uni.gallery.otherPhotos.push(...urls);
+      console.log("✅ Saved other URLs:", urls); // Debug
     }
 
     await uni.save();
@@ -52,6 +61,11 @@ export const getGallery = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "University not found" });
+    }
+
+    // Ensure gallery is initialized even if empty
+    if (!uni.gallery) {
+      uni.gallery = { infraPhotos: [], eventPhotos: [], otherPhotos: [] };
     }
 
     res.json({

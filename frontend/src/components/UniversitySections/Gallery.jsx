@@ -4,11 +4,13 @@ import "./Gallery.css";
 
 const API_BASE = import.meta?.env?.VITE_API_BASE || "https://acvora-07fo.onrender.com";
 
-// helper to build correct image URL
+// ✅ Updated helper: Smart URL building - no prepend for HTTP (Cloudinary), fallback for local
 const getImageUrl = (src) => {
   if (!src) return "";
-  const clean = src.replace(/\\/g, "/"); // normalize backslashes if any
-  return clean.startsWith("http") ? clean : `${API_BASE}/${clean}`;
+  const clean = src.replace(/\\/g, "/"); // Normalize backslashes
+  if (clean.startsWith("http")) return clean; // ✅ Direct Cloudinary URLs
+  // Fallback only for local dev paths like /uploads/...
+  return `${API_BASE}/${clean}`;
 };
 
 const Gallery = ({ universityId, darkMode }) => {
@@ -75,6 +77,7 @@ const Gallery = ({ universityId, darkMode }) => {
                   <img
                     src={getImageUrl(src)}
                     alt={`Infrastructure ${index + 1}`}
+                    onError={(e) => { e.target.style.display = 'none'; console.warn('Image load failed:', src); }} // Debug: Hide broken imgs
                   />
                   <button
                     className="preview-btn"
@@ -111,6 +114,7 @@ const Gallery = ({ universityId, darkMode }) => {
                   <img
                     src={getImageUrl(src)}
                     alt={`Event ${index + 1}`}
+                    onError={(e) => { e.target.style.display = 'none'; console.warn('Image load failed:', src); }} // Debug
                   />
                   <button
                     className="preview-btn"
@@ -142,6 +146,7 @@ const Gallery = ({ universityId, darkMode }) => {
                   <img
                     src={getImageUrl(src)}
                     alt={`Other ${index + 1}`}
+                    onError={(e) => { e.target.style.display = 'none'; console.warn('Image load failed:', src); }} // Debug
                   />
                   <button
                     className="preview-btn"
