@@ -34,7 +34,7 @@ const Gallery = ({ universityId, darkMode }) => {
 
         if (!res.ok) throw new Error(data?.error || "Failed to fetch gallery");
 
-        setGallery(data.gallery || {});
+        setGallery(data.gallery || data.data || {});
       } catch (err) {
         console.error("❌ Error fetching gallery:", err);
         setError(err.message);
