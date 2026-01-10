@@ -1,4 +1,3 @@
-// Updated: frontend/src/Pages/UniversityRegister.jsx
 import React, { useState, useEffect } from "react"; // ✅ Added useEffect
 import { useNavigate } from "react-router-dom"; // ✅ For post-submit redirect
 import "./UniversityRegister.css";

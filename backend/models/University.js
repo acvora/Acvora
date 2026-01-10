@@ -66,6 +66,7 @@ const universityRegistrationSchema = new mongoose.Schema({
   affiliations: [String],    // e.g., ["AICTE", "University Grants Commission"]
   students: String,
   faculty: String,
+  modeOfEducation: [String], // ✅ NEW: Added from frontend form
 
   // Step 1: About Section
   description: String, // ✅ matches frontend AboutUs.jsx
@@ -75,12 +76,14 @@ const universityRegistrationSchema = new mongoose.Schema({
   address: String,
   state: String,
   city: String,
+  pinCode: String, // ✅ NEW: Added from frontend form
   email: String,
   phone: String,
   website: String,
   socialMedia: String,
 
   // Step 3: Key Persons
+  contactPerson: String, // ✅ NEW: Added from frontend form
   chancellor: String,
   viceChancellor: String,
   registrar: String,

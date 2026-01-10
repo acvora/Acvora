@@ -1,35 +1,25 @@
 // src/api.js
 import axios from "axios";
 
+// 1. Define the environment check
 const isLocal = window.location.hostname === "localhost";
 
+// 2. Clean URL construction to avoid double "/api/api"
 const getBaseURL = () => {
-  if (isLocal) return "http://localhost:5001/api"; // Matches index.js port
-  
-  // Cleanly handle the environment variable to prevent /api/api
-  let envURL = process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com";
-  envURL = envURL.replace(/\/$/, ""); // Remove trailing slash
-  
-  // If the variable doesn't have /api, add it
+  if (isLocal) return "http://localhost:5001/api";
+
+  // Get the base URL from env or fallback to Render
+  const envURL =
+    process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com";
+
+  // Ensure we don't double up if the env variable already includes /api
   return envURL.endsWith("/api") ? envURL : `${envURL}/api`;
 };
 
 const API = axios.create({
-  baseURL: getBaseURL()
+  baseURL: getBaseURL(),
 });
 
-/* --- Updated Fetch Functions --- */
-
-export const getStudents = async () => {
-  try {
-    const response = await API.get("/signup"); // Hits /api/signup
-    // signup.js returns the array directly
-    return Array.isArray(response.data) ? response.data : [];
-  } catch (error) {
-    console.error("Error fetching signups:", error);
-    return []; // Returns empty array on 404, causing "0" in dashboard
-  }
-};
 /* --- API Functions --- */
 
 export const saveStudent = async (studentData) => {
@@ -37,6 +27,18 @@ export const saveStudent = async (studentData) => {
     // Hits /api/students
     const response = await API.post("/students", studentData);
     return response.data;
+  } catch (error) {
+    console.error("Error fetching signups:", error);
+    return []; // Returns empty array on 404, causing "0" in dashboard
+  }
+};
+/* --- API Functions --- */
+
+export const getStudents = async () => {
+  try {
+    // Hits /api/signup
+    const response = await API.get("/signup");
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Error saving student:", error);
     throw error;
@@ -88,5 +90,38 @@ export const getStandaloneCourses = async () => {
   } catch (error) {
     console.error("Error fetching standalone courses:", error);
     return [];
+  }
+};
+
+// Fetch all global scholarships (including university-linked ones)
+export const getScholarships = async () => {
+  try {
+    const response = await API.get("/scholarships"); // Hits /api/scholarships
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error fetching scholarships:", error);
+    return [];
+  }
+};
+
+// Fetch admin-specific scholars/grants
+export const getAdminScholars = async () => {
+  try {
+    const response = await API.get("/adminscholar"); // Hits /api/adminscholar
+    return response.data.success ? response.data.scholars : [];
+  } catch (error) {
+    console.error("Error fetching admin scholars:", error);
+    return [];
+  }
+};
+
+// Create a new admin scholarship
+export const createAdminScholar = async (scholarData) => {
+  try {
+    const response = await API.post("/adminscholar", scholarData); // Hits /api/adminscholar
+    return response.data;
+  } catch (error) {
+    console.error("Error creating scholar:", error);
+    throw error;
   }
 };
