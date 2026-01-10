@@ -61,10 +61,12 @@ const universityRegistrationSchema = new mongoose.Schema({
   type: String,
   year: String,
   ownership: String,
-  accreditation: String,
-  affiliation: String,
+  // ✅ FIXED: Updated to arrays to match frontend (selectedAccreditations/selectedAffiliations)
+  accreditations: [String],  // e.g., ["NAAC A++", "UGC"]
+  affiliations: [String],    // e.g., ["AICTE", "University Grants Commission"]
   students: String,
   faculty: String,
+  modeOfEducation: [String], // ✅ NEW: Added from frontend form
 
   // Step 1: About Section
   description: String, // ✅ matches frontend AboutUs.jsx
@@ -74,12 +76,14 @@ const universityRegistrationSchema = new mongoose.Schema({
   address: String,
   state: String,
   city: String,
+  pinCode: String, // ✅ NEW: Added from frontend form
   email: String,
   phone: String,
   website: String,
   socialMedia: String,
 
   // Step 3: Key Persons
+  contactPerson: String, // ✅ NEW: Added from frontend form
   chancellor: String,
   viceChancellor: String,
   registrar: String,
