@@ -1,4 +1,3 @@
-// Updated: frontend/src/Pages/UniversityRegister.jsx
 import React, { useState, useEffect } from "react"; // ✅ Added useEffect
 import { useNavigate } from "react-router-dom"; // ✅ For post-submit redirect
 import "./UniversityRegister.css";
@@ -375,11 +374,7 @@ export default function MultiStepForm() {
       // -----------------------------
       const baseUrl = "https://acvora-07fo.onrender.com";
 
-<<<<<<< HEAD
-      const res = await fetch(`${baseUrl}/api/university-registration`, {
-=======
       const res = await fetch(`${baseUrl}/api/universities`, {
->>>>>>> f871a2d (University form updated)
         method: "POST",
         body: payload,
       });
@@ -426,11 +421,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.file);
         await uploadFile(
-<<<<<<< HEAD
-          `${baseUrl}/api/universities/${instituteId}/courses/upload`,
-=======
           `${baseUrl}/api/universities/${createdId}/courses/upload`,
->>>>>>> f871a2d (University form updated)
           fd,
           "Courses"
         );
@@ -460,11 +451,7 @@ export default function MultiStepForm() {
         const fd = new FormData();
         fd.append("file", files.placementsExcel);
         await uploadFile(
-<<<<<<< HEAD
-          `${baseUrl}/api/universities/${instituteId}/placements/upload`,
-=======
           `${baseUrl}/api/universities/${createdId}/placements/upload`,
->>>>>>> f871a2d (University form updated)
           fd,
           "Placements"
         );
@@ -476,18 +463,10 @@ export default function MultiStepForm() {
         files.eventPhotos?.forEach((f) => fd.append("eventPhotos", f));
         files.galleryImages?.forEach((f) => fd.append("galleryImages", f));
         await uploadFile(
-<<<<<<< HEAD
-  `${baseUrl}/api/universities/${instituteId}/gallery/upload`,
-  fd,
-  "Gallery"
-);
-
-=======
           `${baseUrl}/api/universities/${createdId}/gallery/upload`,
           fd,
           "Gallery"
         );
->>>>>>> f871a2d (University form updated)
       }
 
       if (files.recruitersLogos?.length) {
@@ -555,7 +534,7 @@ export default function MultiStepForm() {
           onSubmit={handleSubmit}
         >
           {step === 1 && (
-            <div className="univ-form-step grid-3">
+            <div className="univ-form-step step1-layout">
               <h3>Step 1: {stepTitles[0]}</h3>
               <div className="field-group basic-section">
                 <h4>Basic Institute Details</h4>
@@ -832,7 +811,7 @@ export default function MultiStepForm() {
           )}
 
           {step === 2 && (
-            <div className="univ-form-step grid-3">
+            <div className="univ-form-step step1-layout">
               <h3>Step 2: {stepTitles[1]}</h3>
               <div className="field-group">
                 <h4>Academic Data Uploads</h4>
@@ -857,7 +836,7 @@ export default function MultiStepForm() {
           )}
 
           {step === 3 && (
-            <div className="univ-form-step grid-3">
+            <div className="univ-form-step step1-layout">
               <h3>Step 3: {stepTitles[2]}</h3>
               <div className="field-group">
                 <h4>Placements Data</h4>
@@ -1045,7 +1024,7 @@ export default function MultiStepForm() {
           )}
 
           {step === 4 && (
-            <div className="univ-form-step grid-3">
+            <div className="univ-form-step step1-layout">
               <h3>Step 4: {stepTitles[3]}</h3>
               <div className="field-group contact-section">
                 <h4>Contact Information</h4>
