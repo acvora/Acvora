@@ -1,6 +1,8 @@
 import express from "express";
 import { uploadGallery, getGallery } from "../controllers/galleryController.js";
 import upload from "../middlewares/multer.js";
+import UniversityRegistration from "../models/University.js";
+
 
 const router = express.Router();
 

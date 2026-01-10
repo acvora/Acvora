@@ -5,46 +5,92 @@ import "./ProfileForm.css";
 export default function ProfileForm() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const baseUrl = "https://acvora-07fo.onrender.com";
+
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
-  const baseUrl = "https://acvora-07fo.onrender.com";
 
+  /* ---------------------------------------------------
+     FETCH & NORMALIZE UNIVERSITY DATA
+  --------------------------------------------------- */
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         if (!id) return;
+
         const res = await fetch(`${baseUrl}/api/universities/${id}`);
         if (!res.ok) throw new Error("Failed to fetch profile");
-        const data = await res.json();
-        setProfile(data);
-        setFormData(data);
+
+        const json = await res.json();
+        const uni = json.data || json;
+
+        setProfile(uni);
+
+        // 🔥 Normalize arrays → strings for inputs
+        setFormData({
+          ...uni,
+          accreditation: uni.accreditations?.join(", ") || "",
+          affiliation: uni.affiliations?.join(", ") || "",
+          modeOfEducation: uni.modeOfEducation?.join(", ") || "",
+          facilities: uni.facilities || [],
+          branches: uni.branches || [],
+        });
       } catch (err) {
         console.error("❌ Error fetching profile:", err);
       }
     };
+
     fetchProfile();
   }, [id]);
 
+  /* ---------------------------------------------------
+     HANDLE INPUT CHANGE
+  --------------------------------------------------- */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: type === "checkbox" ? checked : value,
-    });
+    }));
   };
 
+  /* ---------------------------------------------------
+     UPDATE PROFILE (PUT)
+  --------------------------------------------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      // 🔁 Convert strings → arrays for backend
+      const payload = {
+        ...formData,
+        accreditations: formData.accreditation
+          ? formData.accreditation.split(",").map((a) => a.trim())
+          : [],
+        affiliations: formData.affiliation
+          ? formData.affiliation.split(",").map((a) => a.trim())
+          : [],
+        modeOfEducation: formData.modeOfEducation
+          ? formData.modeOfEducation.split(",").map((m) => m.trim())
+          : [],
+      };
+
+      delete payload.accreditation;
+      delete payload.affiliation;
+
       const res = await fetch(`${baseUrl}/api/universities/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
+
       if (!res.ok) throw new Error("Failed to update profile");
-      const updated = await res.json();
-      setProfile(updated);
+
+      const updatedJson = await res.json();
+      const updatedUni = updatedJson.data || updatedJson;
+
+      setProfile(updatedUni);
       setEditing(false);
       alert("✅ Profile updated successfully!");
     } catch (err) {
@@ -53,13 +99,19 @@ export default function ProfileForm() {
     }
   };
 
+  /* ---------------------------------------------------
+     DELETE PROFILE
+  --------------------------------------------------- */
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this university?")) return;
+
     try {
       const res = await fetch(`${baseUrl}/api/universities/${id}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("Failed to delete profile");
+
+      if (!res.ok) throw new Error("Delete failed");
+
       alert("🗑 University deleted!");
       navigate("/");
     } catch (err) {
@@ -72,6 +124,9 @@ export default function ProfileForm() {
     return <p className="loading-text">Loading profile...</p>;
   }
 
+  /* ---------------------------------------------------
+     UI
+  --------------------------------------------------- */
   return (
     <div className="profile-container">
       <h2 className="profile-title">University Profile</h2>
@@ -86,58 +141,55 @@ export default function ProfileForm() {
       </div>
 
       <form className="profile-form" onSubmit={handleSubmit}>
-        {/* Basic Info */}
+
+        {/* BASIC INFO */}
         <section>
           <h3>Basic Info</h3>
-          <input name="instituteName" placeholder="Institute Name" value={formData.instituteName || ""} onChange={handleChange} disabled={!editing} />
-          <input name="type" placeholder="Type" value={formData.type || ""} onChange={handleChange} disabled={!editing} />
-          <input name="year" placeholder="Year" value={formData.year || ""} onChange={handleChange} disabled={!editing} />
-          <input name="ownership" placeholder="Ownership" value={formData.ownership || ""} onChange={handleChange} disabled={!editing} />
-          <input name="accreditation" placeholder="Accreditation" value={formData.accreditation || ""} onChange={handleChange} disabled={!editing} />
-          <input name="affiliation" placeholder="Affiliation" value={formData.affiliation || ""} onChange={handleChange} disabled={!editing} />
-          <input name="students" placeholder="No. of Students" value={formData.students || ""} onChange={handleChange} disabled={!editing} />
-          <input name="faculty" placeholder="No. of Faculty" value={formData.faculty || ""} onChange={handleChange} disabled={!editing} />
+          <input name="instituteName" value={formData.instituteName || ""} onChange={handleChange} disabled={!editing} />
+          <input name="type" value={formData.type || ""} onChange={handleChange} disabled={!editing} />
+          <input name="year" value={formData.year || ""} onChange={handleChange} disabled={!editing} />
+          <input name="ownership" value={formData.ownership || ""} onChange={handleChange} disabled={!editing} />
+          <input name="accreditation" value={formData.accreditation || ""} onChange={handleChange} disabled={!editing} />
+          <input name="affiliation" value={formData.affiliation || ""} onChange={handleChange} disabled={!editing} />
+          <input name="students" value={formData.students || ""} onChange={handleChange} disabled={!editing} />
+          <input name="faculty" value={formData.faculty || ""} onChange={handleChange} disabled={!editing} />
         </section>
 
-        {/* Contact Info */}
+        {/* CONTACT */}
         <section>
-          <h3>Contact & Info</h3>
-          <input name="address" placeholder="Address" value={formData.address || ""} onChange={handleChange} disabled={!editing} />
-          <input name="city" placeholder="City" value={formData.city || ""} onChange={handleChange} disabled={!editing} />
-          <input name="state" placeholder="State" value={formData.state || ""} onChange={handleChange} disabled={!editing} />
-          <input name="email" placeholder="Email" value={formData.email || ""} onChange={handleChange} disabled={!editing} />
-          <input name="phone" placeholder="Phone" value={formData.phone || ""} onChange={handleChange} disabled={!editing} />
-          <input name="website" placeholder="Website" value={formData.website || ""} onChange={handleChange} disabled={!editing} />
-          <input name="socialMedia" placeholder="Social Media Links" value={formData.socialMedia || ""} onChange={handleChange} disabled={!editing} />
-          <input name="topRecruiters" placeholder="Top Recruiters" value={formData.topRecruiters || ""} onChange={handleChange} disabled={!editing} />
-          <input name="highestPackage" placeholder="Highest Package" value={formData.highestPackage || ""} onChange={handleChange} disabled={!editing} />
-          <input name="avgPackage" placeholder="Average Package" value={formData.avgPackage || ""} onChange={handleChange} disabled={!editing} />
-          <input name="campusSize" placeholder="Campus Size" value={formData.campusSize || ""} onChange={handleChange} disabled={!editing} />
-          <input name="hostelFee" placeholder="Hostel Fee" value={formData.hostelFee || ""} onChange={handleChange} disabled={!editing} />
-          <input name="studentRating" placeholder="Student Rating" value={formData.studentRating || ""} onChange={handleChange} disabled={!editing} />
-          <input name="nirfRank" placeholder="NIRF Rank" value={formData.nirfRank || ""} onChange={handleChange} disabled={!editing} />
+          <h3>Contact</h3>
+          <input name="address" value={formData.address || ""} onChange={handleChange} disabled={!editing} />
+          <input name="city" value={formData.city || ""} onChange={handleChange} disabled={!editing} />
+          <input name="state" value={formData.state || ""} onChange={handleChange} disabled={!editing} />
+          <input name="email" value={formData.email || ""} onChange={handleChange} disabled={!editing} />
+          <input name="phone" value={formData.phone || ""} onChange={handleChange} disabled={!editing} />
+          <input name="website" value={formData.website || ""} onChange={handleChange} disabled={!editing} />
+          <input name="socialMedia" value={formData.socialMedia || ""} onChange={handleChange} disabled={!editing} />
         </section>
 
-        {/* Placements */}
+        {/* PLACEMENTS */}
         <section>
           <h3>Placements</h3>
-          <input name="placementRate" placeholder="Placement Rate (%)" value={formData.placementRate || ""} onChange={handleChange} disabled={!editing} />
+          <input name="placementRate" value={formData.placementRate || ""} onChange={handleChange} disabled={!editing} />
+          <input name="highestPackage" value={formData.highestPackage || ""} onChange={handleChange} disabled={!editing} />
+          <input name="avgPackage" value={formData.avgPackage || ""} onChange={handleChange} disabled={!editing} />
+          <input name="topRecruiters" value={formData.topRecruiters || ""} onChange={handleChange} disabled={!editing} />
         </section>
 
-        {/* Facilities */}
+        {/* FACILITIES */}
         <section>
           <h3>Facilities</h3>
-          {formData.facilities?.length > 0 ? (
+          {formData.facilities?.length ? (
             formData.facilities.map((f, i) => (
               <div key={i} className="facility-item">
-                <strong>{f.name}:</strong>{" "}
+                <strong>{f.name}</strong>
                 {editing ? (
                   <input
                     value={f.description || ""}
                     onChange={(e) => {
-                      const updatedFacilities = [...formData.facilities];
-                      updatedFacilities[i].description = e.target.value;
-                      setFormData({ ...formData, facilities: updatedFacilities });
+                      const updated = [...formData.facilities];
+                      updated[i].description = e.target.value;
+                      setFormData({ ...formData, facilities: updated });
                     }}
                   />
                 ) : (
@@ -150,15 +202,16 @@ export default function ProfileForm() {
           )}
         </section>
 
-        {/* International Section */}
+        {/* INTERNATIONAL */}
         <section>
           <h3>International</h3>
-          <input name="intlStudentOffice" placeholder="Intl. Student Office" value={formData.intlStudentOffice || ""} onChange={handleChange} disabled={!editing} />
-          <input name="countriesEnrolled" placeholder="Countries Enrolled" value={formData.countriesEnrolled || ""} onChange={handleChange} disabled={!editing} />
-          <input name="foreignMoUs" placeholder="Foreign MoUs" value={formData.foreignMoUs || ""} onChange={handleChange} disabled={!editing} />
-          <input name="languageSupport" placeholder="Language Support" value={formData.languageSupport || ""} onChange={handleChange} disabled={!editing} />
-          <input name="visaSupport" placeholder="Visa Support" value={formData.visaSupport || ""} onChange={handleChange} disabled={!editing} />
+          <input name="intlStudentOffice" value={formData.intlStudentOffice || ""} onChange={handleChange} disabled={!editing} />
+          <input name="countriesEnrolled" value={formData.countriesEnrolled || ""} onChange={handleChange} disabled={!editing} />
+          <input name="foreignMoUs" value={formData.foreignMoUs || ""} onChange={handleChange} disabled={!editing} />
+          <input name="languageSupport" value={formData.languageSupport || ""} onChange={handleChange} disabled={!editing} />
+          <input name="visaSupport" value={formData.visaSupport || ""} onChange={handleChange} disabled={!editing} />
         </section>
+
       </form>
     </div>
   );

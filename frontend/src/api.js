@@ -28,10 +28,11 @@ export const saveStudent = async (studentData) => {
     const response = await API.post("/students", studentData);
     return response.data;
   } catch (error) {
-    console.error("Error saving student:", error);
-    throw error;
+    console.error("Error fetching signups:", error);
+    return []; // Returns empty array on 404, causing "0" in dashboard
   }
 };
+/* --- API Functions --- */
 
 export const getStudents = async () => {
   try {
@@ -39,8 +40,8 @@ export const getStudents = async () => {
     const response = await API.get("/signup");
     return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
-    console.error("Error fetching students:", error);
-    return [];
+    console.error("Error saving student:", error);
+    throw error;
   }
 };
 

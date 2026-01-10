@@ -1,4 +1,4 @@
-// Pages/Scholarship.jsx
+// src/Pages/Scholarship.jsx (Updated ScholarshipCard only)
 import React, { useMemo, useState, useEffect } from "react";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { motion } from "framer-motion";
@@ -223,7 +223,7 @@ function ScholarshipCard({ data, user, onToggleSave, savedScholarships }) {
         <div className={`scholar-status ${status?.toLowerCase()}`}>{status || "Open"}</div>
         <div className="scholar-card-actions">
           <button className="scholar-card-button counselling">Get Counselling</button>
-          <Link to={`/scholarship/${_id}`} className="scholar-card-button explore">Explore Now</Link>
+          <Link to={`/scholarship/${_id}`} state={{ scholarship: data }} className="scholar-card-button explore">Explore Now</Link>
         </div>
       </div>
     </motion.div>
@@ -340,8 +340,8 @@ export default function Scholarship() {
             const merged = {
               ...prev,
               ...it,
-              tags: Array.from(new Set([...(prev.tags||[]), ...(it.tags||[])])),
-              logo: Array.from(new Set([...(prev.logo||[]), ...(it.logo||[])])),
+              tags: Array.from(new Set([...(prev.tags||[]), ...(it.tags||[])]) ),
+              logo: Array.from(new Set([...(prev.logo||[]), ...(it.logo||[])]) ),
             };
             map.set(key, merged);
           }

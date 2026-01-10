@@ -1,10 +1,10 @@
-// routes/signup.js
 import express from "express";
+import bcrypt from "bcryptjs";
 import Signup from "../models/Signup.js";
 
 const router = express.Router();
 
-// CREATE user after Firebase signup
+// POST /api/signup
 router.post("/", async (req, res) => {
   try {
     const { name, phone, email, password, address, pincode, firebaseId } =
@@ -44,18 +44,19 @@ router.post("/", async (req, res) => {
       .status(201)
       .json({ success: true, message: "Signup successful", user: newUser });
   } catch (err) {
-    console.error("❌ Signup save error:", err.message);
-    res.status(500).json({ message: "Signup failed" });
-  }
-});
-
-router.get("/", async (req, res) => {
-  try {
-    const users = await Signup.find({}); // Queries the 'signups' collection
-    res.status(200).json(users);
-  } catch (err) {
+    console.error("❌ Signup error:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
+// ✅ NEW: Add this GET route to fetch all users for the dashboard
+router.get("/", async (req, res) => {
+  try {
+    const users = await Signup.find({}).sort({ createdAt: -1 }); // Fetch all from 'signups'
+    res.status(200).json(users); 
+  } catch (err) {
+    console.error("❌ Error fetching signups:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 export default router;

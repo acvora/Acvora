@@ -26,7 +26,7 @@ export const uploadPlacementsExcel = async (req, res) => {
     }));
 
     // University update
-    const uni = await University.findById(universityId);
+    const uni = await UniversityRegistration.findById(universityId);
     if (!uni) {
       return res.status(404).json({ success: false, message: "University not found" });
     }
