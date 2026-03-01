@@ -14,7 +14,7 @@ export const uploadRecruitersLogos = async (req, res) => {
     const fileUrls = req.files.map((file) => file.path || file.location || file.url);
 
     // University dhundo
-    const uni = await University.findById(universityId);
+    const uni = await UniversityRegistration.findById(universityId);
     if (!uni) {
       return res.status(404).json({ success: false, message: "University not found" });
     }

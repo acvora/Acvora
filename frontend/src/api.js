@@ -1,29 +1,127 @@
 // src/api.js
 import axios from "axios";
 
-// Create axios instance with backend URL from .env
+// 1. Define the environment check
+const isLocal = window.location.hostname === "localhost";
+
+// 2. Clean URL construction to avoid double "/api/api"
+const getBaseURL = () => {
+  if (isLocal) return "http://localhost:5001/api";
+
+  // Get the base URL from env or fallback to Render
+  const envURL =
+    process.env.REACT_APP_API_URL || "https://acvora-07fo.onrender.com";
+
+  // Ensure we don't double up if the env variable already includes /api
+  return envURL.endsWith("/api") ? envURL : `${envURL}/api`;
+};
+
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL + "/api"
+  baseURL: getBaseURL(),
 });
 
-// Function to save a student
+/* --- API Functions --- */
+
 export const saveStudent = async (studentData) => {
   try {
+    // Hits /api/students
     const response = await API.post("/students", studentData);
-    return response.data; // { message: "Student saved successfully!" }
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching signups:", error);
+    return []; // Returns empty array on 404, causing "0" in dashboard
+  }
+};
+/* --- API Functions --- */
+
+export const getStudents = async () => {
+  try {
+    // Hits /api/signup
+    const response = await API.get("/signup");
+    return Array.isArray(response.data) ? response.data : [];
   } catch (error) {
     console.error("Error saving student:", error);
     throw error;
   }
 };
 
-// Function to get all students
-export const getStudents = async () => {
+export const getCounsellings = async () => {
   try {
-    const response = await API.get("/students");
-    return response.data; // Array of students
+    // Hits /api/counselling
+    const response = await API.get("/counselling");
+    // Access response.data.data per your controller structure
+    if (response.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    }
+    return [];
   } catch (error) {
-    console.error("Error fetching students:", error);
+    console.error("Error fetching counselling:", error);
+    return [];
+  }
+};
+
+export const getUniversities = async () => {
+  try {
+    // Hits /api/universities
+    const response = await API.get("/universities");
+    return response.data; // Expected { success: true, data: [...] }
+  } catch (error) {
+    console.error("Error fetching universities:", error);
+    return { success: false, data: [] };
+  }
+};
+
+export const updateUniversityStatus = async (id, status) => {
+  try {
+    // Hits /api/universities/status/:id
+    const response = await API.patch(`/universities/status/${id}`, { status });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating status:", error);
+    throw error;
+  }
+};
+
+export const getStandaloneCourses = async () => {
+  try {
+    // Hits /api/courses
+    const response = await API.get("/courses");
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error fetching standalone courses:", error);
+    return [];
+  }
+};
+
+// Fetch all global scholarships (including university-linked ones)
+export const getScholarships = async () => {
+  try {
+    const response = await API.get("/scholarships"); // Hits /api/scholarships
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error fetching scholarships:", error);
+    return [];
+  }
+};
+
+// Fetch admin-specific scholars/grants
+export const getAdminScholars = async () => {
+  try {
+    const response = await API.get("/adminscholar"); // Hits /api/adminscholar
+    return response.data.success ? response.data.scholars : [];
+  } catch (error) {
+    console.error("Error fetching admin scholars:", error);
+    return [];
+  }
+};
+
+// Create a new admin scholarship
+export const createAdminScholar = async (scholarData) => {
+  try {
+    const response = await API.post("/adminscholar", scholarData); // Hits /api/adminscholar
+    return response.data;
+  } catch (error) {
+    console.error("Error creating scholar:", error);
     throw error;
   }
 };

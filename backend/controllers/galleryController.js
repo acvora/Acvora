@@ -1,4 +1,4 @@
-import University from "../models/University.js";
+import UniversityRegistration from "../models/University.js";
 
 // helper to normalize file path
 const normalizePath = (p) => p.replace(/\\/g, "/");
@@ -7,7 +7,7 @@ const normalizePath = (p) => p.replace(/\\/g, "/");
 export const uploadGallery = async (req, res) => {
   try {
     const { universityId } = req.params;
-    const uni = await University.findById(universityId);
+    const uni = await UniversityRegistration.findById(universityId);
 
     if (!uni) {
       return res.status(404).json({ success: false, message: "University not found" });
@@ -46,8 +46,7 @@ export const uploadGallery = async (req, res) => {
 export const getGallery = async (req, res) => {
   try {
     const { universityId } = req.params;
-    const uni = await University.findById(universityId);
-
+    const uni = await UniversityRegistration.findById(universityId);
     if (!uni) {
       return res
         .status(404)

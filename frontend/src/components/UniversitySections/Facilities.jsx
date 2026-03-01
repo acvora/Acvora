@@ -39,7 +39,7 @@ const Facilities = ({ universityId }) => {
       .get(`https://acvora-07fo.onrender.com/api/universities/${universityId}`)
       .then((res) => {
         console.log("📥 API response:", res.data);
-        setFacilities(res.data.facilities || []);
+        setFacilities(res.data?.data?.facilities || []);
       })
       .catch((err) => console.error("❌ Error fetching facilities:", err));
   }, [universityId]);

@@ -3,7 +3,7 @@ import University from "../models/University.js";
 export const uploadDocs = async (req, res) => {
   try {
     const { universityId } = req.params;
-    const uni = await University.findById(universityId);
+    const uni = await UniversityRegistration.findById(universityId);
 
     if (!uni) {
       return res.status(404).json({ success: false, message: "University not found" });
@@ -46,7 +46,7 @@ export const uploadDocs = async (req, res) => {
 export const getDocs = async (req, res) => {
   try {
     const { universityId } = req.params;
-    const uni = await University.findById(universityId);
+    const uni = await UniversityRegistration.findById(universityId);
 
     if (!uni) {
       return res

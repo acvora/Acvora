@@ -30,7 +30,9 @@ import logo from "../../src/Images/logoo.png";
 import "./UniversityPage.css";
 import "../components/UniversitySections/CoursesAndFees.css";
 
-const API_BASE = import.meta?.env?.VITE_API_BASE || "https://acvora-07fo.onrender.com";
+const API_BASE =
+  process.env.REACT_APP_API_BASE || "https://acvora-07fo.onrender.com";
+
 const FALLBACK_BANNER =
   "https://www.shutterstock.com/image-photo/ucla-los-angeles-usa-may-600nw-2397826809.jpg";
 const FALLBACK_LOGO = "https://placehold.co/96x96?text=Logo";
@@ -64,7 +66,7 @@ function UniversityPage() {
     document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // Fetch university data
+  // Fetch university data (FIXED: data?.data || data)
   useEffect(() => {
     const fetchUniversity = async () => {
       try {
@@ -72,7 +74,7 @@ function UniversityPage() {
         const res = await fetch(`${API_BASE}/api/universities/${id}`);
         const data = await res.json();
         if (!res.ok) throw new Error(data?.error || "Failed to fetch university data");
-        setUniversity(data?.uni || data);
+        setUniversity(data?.data || data);  // ✅ Fixed: Handles {data: uni} or raw uni
         setStatus("ready");
       } catch (e) {
         setError(e.message);
@@ -82,11 +84,13 @@ function UniversityPage() {
     fetchUniversity();
   }, [id]);
 
-  // Banner sources (deduplicate and filter)
+  // Banner sources (FIXED: Pull from gallery.infraPhotos, etc. + dedupe/filter)
   const bannerSources = [
     ...(university?.bannerImage || []),
     ...(university?.photos || []),
-    ...(university?.galleryImages || []),
+    ...(university?.gallery?.infraPhotos || []),
+    ...(university?.gallery?.eventPhotos || []),
+    ...(university?.gallery?.otherPhotos || [])
   ].filter((url, index, self) => url && self.indexOf(url) === index);
 
   // Banner auto-slide

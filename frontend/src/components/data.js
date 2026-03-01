@@ -4,7 +4,14 @@ import Image3 from "../Images/VIT-Chennai.webp";
 import Image4 from "../Images/Lpu-2.jpg";
 import Image5 from "../Images/chandigarh-university-2.jpg";
 import Image6 from "../Images/chennai.jpg";
-
+import {
+    GraduationCapIcon,
+    CounsellingIcon,
+    ScholarshipIcon,
+    StudyAbroadIcon,
+    OnlineCoachingIcon,
+    NewsIcon,
+  } from "../components/icons/EduIcons";
 
 
 
@@ -75,43 +82,49 @@ export const higherstudies = [
 
 export const infodata = [
     {
-        id:1,
-        heading: "Explore Universities, College, and Courses",
-        para: "Explore the best colleges and universities based on your interest in the type, of course, you want to choose",
-        link: "/explorecollegespage"
+      id: 1,
+      heading: "Explore Universities, College, and Courses",
+      para: "Explore the best colleges and universities based on your interest in the type, of course, you want to choose",
+      link: "/explorecollegespage",
+      icon: <GraduationCapIcon />
     },
     {
-        id:2,
-        heading: "Free Counselling By Experts",
-        para: "Get Free Counselling from our experts and good advice on choosing the best-suited career for your ward",
-        link:"/counselling" 
+      id: 2,
+      heading: "Free Counselling By Experts",
+      para: "Get Free Counselling from our experts and good advice on choosing the best-suited career for your ward",
+      link: "/counselling",
+      icon: <CounsellingIcon />
     },
     {
-        id:3,
-        heading: " Education Loan And Scholarship",
-        para: "Get easy loans and scholarships based on various schemes launched by governments and tests conducted by the university.",
-        link:"/scholarship"
+      id: 3,
+      heading: "Education Loan And Scholarship",
+      para: "Get easy loans and scholarships based on various schemes launched by governments and tests conducted by the university.",
+      link: "/scholarship",
+      icon: <ScholarshipIcon />
     },
     {
-        id:4,
-        heading: "Study Abroad",
-        para: "Want to secure your future and go abroad just give it a click and you will be guided with step by step procedure to go abroad and study there.",
-        link: "https://studyabroad-hub.netlify.app/"
+      id: 4,
+      heading: "Study Abroad",
+      para: "Want to secure your future and go abroad just give it a click and you will be guided with step by step procedure to go abroad and study there.",
+      link: "https://studyabroad-hub.netlify.app/",
+      icon: <StudyAbroadIcon />
     },
     {
-        id:5,
-        heading: "Online Coaching",
-        para: " Want the best coaching institutes for your ward to crack various competitive exams? Just click it and you will be redirected to the best online coaching institutes in India.",
-        link:""
+      id: 5,
+      heading: "Online Coaching",
+      para: "Want the best coaching institutes for your ward to crack various competitive exams? Just click it and you will be redirected to the best online coaching institutes in India.",
+      link: "",
+      icon: <OnlineCoachingIcon />
     },
     {
-        id:6,
-        heading: "Education News And Exam Updates",
-        para: "Just one single click will lead you to the page that consists of all the latest news and exam updates",
-        link:"newsfeed"
-    },
-    
-]
+      id: 6,
+      heading: "Education News And Exam Updates",
+      para: "Just one single click will lead you to the page that consists of all the latest news and exam updates",
+      link: "/newsfeed",
+      icon: <NewsIcon />
+    }
+  ];
+
 
 
 export const reviewsData = [
